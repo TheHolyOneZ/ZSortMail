@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# cargo-deny policy. ZSortMail is GPL-3.0-or-later, so every dependency must be under a
+# licence that can be combined with it. Run `cargo deny check`.
+
+[graph]
+targets = [
+  "x86_64-unknown-linux-gnu",
+  "x86_64-pc-windows-msvc",
+  "aarch64-apple-darwin",
+]
+
+[advisories]
+version = 2
+# These five are informational "unmaintained" notices, not vulnerabilities. All are
+# transitive dependencies of Tauri or specta that this project cannot update itself.
+# Each is ignored by exact ID, so any new advisory still fails the check. Revisit them
+# whenever Tauri or specta is upgraded.
+ignore = [
+  { id = "RUSTSEC-2024-0370", reason = "proc-macro-error: compile-time macro crate used by specta and Tauri" },
+  { id = "RUSTSEC-2024-0436", reason = "paste: compile-time macro crate used by specta" },
+  { id = "RUSTSEC-2026-0370", reason = "zbus_names: unmaintained notice, in Tauri's Linux D-Bus stack" },
+  { id = "RUSTSEC-2026-0371", reason = "zvariant_derive: unmaintained notice, in Tauri's Linux D-Bus stack" },
+  { id = "RUSTSEC-2026-0372", reason = "zvariant: unmaintained notice, in Tauri's Linux D-Bus stack" },
+]
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Zlib",
+  "MPL-2.0",
+  "CC0-1.0",
+  "0BSD",
+  "Unlicense",
+  "BSL-1.0",
+  "CDLA-Permissive-2.0",
+  "GPL-3.0-or-later",
+]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+# Our own crates depend on each other by path. They are all `publish = false`.
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

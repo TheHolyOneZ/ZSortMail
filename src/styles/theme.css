@@ -1,0 +1,80 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/*
+ * Tailwind theme. The default palette, fonts, radii and shadows are removed on purpose,
+ * so classes like bg-indigo-500 or rounded-2xl do not exist. Everything maps to tokens.css.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-desk: var(--desk);
+  --color-pane: var(--pane);
+  --color-sheet: var(--sheet);
+  --color-paper: var(--paper);
+  --color-mine: var(--mine);
+  --color-paper-text: var(--paper-text);
+  --color-paper-text-2: var(--paper-text-2);
+  --color-paper-rule: var(--paper-rule);
+  --color-paper-blue: var(--paper-blue);
+  --color-on-paper-blue: var(--on-paper-blue);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-blue: var(--blue);
+  --color-on-blue: var(--on-blue);
+  --color-red: var(--red);
+  --color-hover: var(--hover);
+  --color-press: var(--press);
+  --color-blue-wash: var(--blue-wash);
+  --color-scrim: var(--scrim);
+  --color-on-stamp: var(--on-stamp);
+  --color-stamp-0: var(--stamp-0);
+  --color-stamp-1: var(--stamp-1);
+  --color-stamp-2: var(--stamp-2);
+  --color-stamp-3: var(--stamp-3);
+  --color-stamp-4: var(--stamp-4);
+  --color-stamp-5: var(--stamp-5);
+  --color-stamp-6: var(--stamp-6);
+  --color-stamp-7: var(--stamp-7);
+  --color-stamp-8: var(--stamp-8);
+  --color-stamp-9: var(--stamp-9);
+
+  --font-*: initial;
+  --font-ui: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-read: "Literata Variable", Georgia, "Times New Roman", serif;
+  --default-font-family: var(--font-ui);
+
+  /* Type scale: meta, ui, body, name, title, display. */
+  --text-*: initial;
+  --text-meta: 12px;
+  --text-meta--line-height: 1.35;
+  --text-ui: 13px;
+  --text-ui--line-height: 1.4;
+  --text-body: 15px;
+  --text-body--line-height: 1.4;
+  --text-name: 17px;
+  --text-name--line-height: 1.3;
+  --text-title: 22px;
+  --text-title--line-height: 1.2;
+  --text-display: 30px;
+  --text-display--line-height: 1.12;
+  --text-read: 16px;
+  --text-read--line-height: 1.62;
+
+  /* Radius hierarchy: panes 0, sheets 4, controls 8, popovers 12, counters full. */
+  --radius-*: initial;
+  --radius-sheet: 4px;
+  --radius-control: 8px;
+  --radius-pop: 12px;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-control: var(--e0);
+  --shadow-sheet: var(--e1);
+  --shadow-lift: var(--e2);
+  --shadow-pop: var(--e3);
+
+  /* Easings live in tokens.css (--ease-settle, --ease-stamp, --ease-fold). */
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: var(--ease-settle);
+}

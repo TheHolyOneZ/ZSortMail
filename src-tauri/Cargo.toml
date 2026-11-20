@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "zsortmail"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Local-first Gmail client organised around people"
+publish = false
+default-run = "zsortmail"
+
+[lib]
+name = "zsortmail_lib"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "zsortmail"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+tauri-plugin-opener = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-window-state = "2"
+tauri-specta = { version = "=2.0.0-rc.29", features = ["derive", "typescript"] }
+specta = { workspace = true }
+specta-typescript = "0.0.15"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+zsm-core = { path = "../crates/zsm-core", features = ["specta"] }
+zsm-app = { path = "../crates/zsm-app" }
+jiff = { workspace = true }

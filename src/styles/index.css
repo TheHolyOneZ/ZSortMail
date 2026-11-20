@@ -1,0 +1,8 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./tokens.css";
+@import "./themes.css";
+@import "./theme.css";
+@import "./base.css";
+@import "./components.css";

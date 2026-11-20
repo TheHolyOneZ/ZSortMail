@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "zsm-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "ZSortMail core: domain model, local store, query language, rules and pipeline"
+publish = false
+
+[features]
+default = []
+# Derive specta::Type on the IPC DTOs so tauri-specta can generate TypeScript.
+specta = ["dep:specta"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+regex = { workspace = true }
+zstd = { workspace = true }
+unicode-normalization = { workspace = true }
+jiff = { workspace = true }
+rusqlite = { version = "0.43", features = ["bundled", "functions"] }
+specta = { workspace = true, optional = true }
+zsm-mime = { path = "../zsm-mime" }

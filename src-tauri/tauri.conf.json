@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ZSortMail",
+  "version": "0.1.0",
+  "identifier": "dev.zsortmail.app",
+  "build": {
+    "beforeDevCommand": "pnpm dev:vite",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "ZSortMail",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 720,
+        "minHeight": 520,
+        "center": true,
+        "decorations": false,
+        "visible": false,
+        "backgroundColor": "#e6eef4",
+        "create": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: zsm: http://zsm.localhost; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost zsm: http://zsm.localhost; worker-src 'self' blob:; frame-src zsm: http://zsm.localhost; object-src 'none'; base-uri 'self'; form-action 'none'",
+      "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: zsm: http://zsm.localhost; font-src 'self' data:; connect-src 'self' ws://localhost:1420 ipc: http://ipc.localhost zsm: http://zsm.localhost; worker-src 'self' blob:; frame-src zsm: http://zsm.localhost; object-src 'none'; base-uri 'self'; form-action 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "Gmail organised around people",
+    "longDescription": "A local-first Gmail client that keeps every conversation, file and note with the person it belongs to.",
+    "copyright": "ZSortMail contributors",
+    "license": "GPL-3.0-or-later",
+    "licenseFile": "../LICENSE",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

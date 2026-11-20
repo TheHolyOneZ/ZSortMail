@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "zsm-gmail"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "ZSortMail Gmail provider: OAuth, REST client, sync, outbox"
+publish = false
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
+base64 = { workspace = true }
+sha2 = { workspace = true }
+rand = { workspace = true }
+fastrand = { workspace = true }
+reqwest = { version = "0.13", default-features = false, features = ["json", "form", "query", "rustls", "http2", "gzip", "charset", "system-proxy"] }
+mail-parser = "1"
+mail-builder = "2"
+encoding_rs = "0.8"
+keyring = "4"
+zsm-core = { path = "../zsm-core" }
+zsm-mime = { path = "../zsm-mime" }
+
+[dev-dependencies]
+zsm-testkit = { path = "../zsm-testkit" }
+rusqlite = { version = "0.43", features = ["bundled"] }
+url = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }

@@ -1,0 +1,105 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/*
+ * Design tokens.
+ *
+ * Identity: blue-black ink on a cool "onion-skin" desk. Messages are paper sheets lying
+ * on it. Colour belongs to people (ten stamp inks), not to the brand. The airmail stripe
+ * is the only brand device and appears only where something needs attention.
+ *
+ * Each token is declared once with light-dark(); the value follows the resolved
+ * color-scheme, which tracks the OS unless <html data-theme> forces light or dark.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --desk: light-dark(#e6eef4, #0b1421);
+  --pane: light-dark(#eff5fa, #131c2a);
+  --sheet: light-dark(#fdfcf9, #1e2734);
+
+  /* Email paper. HTML mail is authored for light backgrounds, so paper stays light in
+     dark mode (dimmed) and uses its own text colours. */
+  --paper: light-dark(#fdfcf9, #e9e8e2);
+  --paper-text: #172135;
+  --paper-text-2: #4d5969;
+  --paper-rule: #d8dee4;
+  --paper-blue: #005798;
+  --on-paper-blue: #fdfcf9;
+  --mine: color-mix(in oklab, #005798 6%, var(--paper));
+
+  /* Ink (text) and lines */
+  --text: light-dark(#172135, #e5ecf3);
+  --text-2: light-dark(#4d5969, #a0acbb);
+  /* Disabled and decoration only: about 3.6:1, below the text threshold. */
+  --text-3: light-dark(#77818c, #6b7686);
+  --rule: light-dark(#d1d8df, #293342);
+  --rule-strong: light-dark(#b4c0cc, #3a4658);
+
+  /* Action colours */
+  --blue: light-dark(#005798, #65b2f1);
+  --on-blue: light-dark(#fdfcf9, #0b1421);
+  --red: light-dark(#d73431, #fd7468);
+
+  /* Derived states */
+  --hover: color-mix(in oklab, var(--text) 5.5%, transparent);
+  --press: color-mix(in oklab, var(--text) 9%, transparent);
+  --blue-wash: color-mix(in oklab, var(--blue) 10%, var(--pane));
+  --scrim: light-dark(rgb(23 33 53 / 0.38), rgb(0 0 0 / 0.55));
+
+  /* Stamp inks, one per person. Index comes from the person's stable hash.
+     Light values hold 5.5:1 against paper text; dark values hold 7.5:1 against the desk. */
+  --stamp-0: light-dark(#a03f3c, #ed8c84); /* vermilion */
+  --stamp-1: light-dark(#9a4900, #e69461); /* copper */
+  --stamp-2: light-dark(#805c02, #d0a348); /* ochre */
+  --stamp-3: light-dark(#586d00, #9eb75d); /* moss */
+  --stamp-4: light-dark(#007749, #61c28e); /* viridian */
+  --stamp-5: light-dark(#01736e, #2ac3bb); /* teal */
+  --stamp-6: light-dark(#006e89, #3cbbe1); /* cerulean */
+  --stamp-7: light-dark(#6f4fa1, #b699eb); /* aubergine */
+  --stamp-8: light-dark(#8c4384, #d78ecc); /* plum */
+  --stamp-9: light-dark(#9a3e67, #e68aaf); /* rose */
+  --on-stamp: light-dark(#fdfcf9, #0b1421);
+
+  /* Airmail stripe colours */
+  --airmail-red: light-dark(#d73431, #e0574f);
+  --airmail-blue: light-dark(#2a64a8, #5b9bdc);
+
+  /* Elevation. Rows are flat; only sheets lift. Shadows are tinted with ink, not grey. */
+  /* A raised control on the desk or a pane (the selected segment). Its ring is the
+     theme's own rule colour; the paper ring below is light and would glare in dark mode. */
+  --e0: 0 0 0 1px var(--rule-strong), 0 1px 2px light-dark(rgb(23 33 53 / 0.1), rgb(0 0 0 / 0.4));
+  --e1: 0 0 0 1px var(--paper-rule), 0 1px 2px light-dark(rgb(23 33 53 / 0.08), rgb(0 0 0 / 0.35));
+  --e2:
+    0 0 0 1px var(--paper-rule),
+    0 10px 28px -14px light-dark(rgb(23 33 53 / 0.34), rgb(0 0 0 / 0.6));
+  --e3:
+    0 0 0 1px var(--rule-strong),
+    0 18px 48px -14px light-dark(rgb(23 33 53 / 0.4), rgb(0 0 0 / 0.7));
+
+  /* Motion. Mirrors src/motion/tokens.ts. */
+  --dur-instant: 90ms;
+  --dur-quick: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-stamp: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-fold: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Layout */
+  --rail-w: 56px;
+  --row-people: 60px;
+  --row-convo: 72px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root[data-density="compact"] {
+  --row-people: 48px;
+  --row-convo: 60px;
+}

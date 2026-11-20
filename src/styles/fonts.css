@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/*
+ * Self-hosted variable fonts (OFL-1.1). No font CDN: the app works offline and sends
+ * nothing to a third party.
+ *
+ * Bricolage Grotesque: weight, width (75 to 100) and optical size axes. UI and names.
+ * Literata: weight and optical size axes, roman and italic. Message reading text.
+ */
+@import "@fontsource-variable/bricolage-grotesque/standard.css";
+@import "@fontsource-variable/literata/opsz.css";
+@import "@fontsource-variable/literata/opsz-italic.css";

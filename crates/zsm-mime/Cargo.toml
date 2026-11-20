@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "zsm-mime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "ZSortMail MIME handling: sanitize HTML, strip quoted history, detect trackers, parse unsubscribe headers"
+publish = false
+
+[dependencies]
+thiserror = { workspace = true }
+ammonia = "4"
+regex = { workspace = true }
+html-escape = { workspace = true }
+url = { workspace = true }

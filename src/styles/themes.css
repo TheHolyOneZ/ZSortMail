@@ -1,0 +1,156 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/*
+ * Colour themes. Each one replaces the surface, text, line and action tokens from
+ * tokens.css and says whether it is light or dark (so native controls, scrollbars and the
+ * light-dark() tokens that remain, like the stamp inks, follow). Everything else is derived.
+ * `light` and `dark` are the defaults in tokens.css. Contrast is checked by the e2e suite for
+ * every theme listed in src/lib/themes.ts.
+ */
+
+:root[data-theme="midnight"] {
+  color-scheme: dark;
+  --desk: #05070b;
+  --pane: #0b0f16;
+  --sheet: #121822;
+  --text: #e8edf5;
+  --text-2: #a3aec0;
+  --text-3: #6b7686;
+  --rule: #1b2330;
+  --rule-strong: #2b364a;
+  --blue: #6cb6ff;
+  --on-blue: #05070b;
+  --red: #ff7b72;
+}
+
+:root[data-theme="graphite"] {
+  color-scheme: dark;
+  --desk: #151515;
+  --pane: #1c1c1c;
+  --sheet: #262626;
+  --text: #ececec;
+  --text-2: #aaaaaa;
+  --text-3: #727272;
+  --rule: #2e2e2e;
+  --rule-strong: #444444;
+  --blue: #7db7ff;
+  --on-blue: #151515;
+  --red: #ff8179;
+}
+
+:root[data-theme="nord"] {
+  color-scheme: dark;
+  --desk: #242933;
+  --pane: #2b303b;
+  --sheet: #343b49;
+  --text: #e5e9f0;
+  --text-2: #aeb8c8;
+  --text-3: #78839a;
+  --rule: #3b4252;
+  --rule-strong: #4c566a;
+  --blue: #88c0d0;
+  --on-blue: #242933;
+  --red: #e58a8a;
+}
+
+:root[data-theme="forest"] {
+  color-scheme: dark;
+  --desk: #0c1511;
+  --pane: #111d17;
+  --sheet: #182a22;
+  --text: #e3efe8;
+  --text-2: #9fb8aa;
+  --text-3: #688074;
+  --rule: #1e3228;
+  --rule-strong: #2d4a3b;
+  --blue: #6fd0a0;
+  --on-blue: #0c1511;
+  --red: #ff8a7a;
+}
+
+:root[data-theme="sky"] {
+  color-scheme: light;
+  --desk: #dcecf8;
+  --pane: #e8f3fb;
+  --sheet: #fbfdff;
+  --paper: #fbfdff;
+  --text: #0f2236;
+  --text-2: #425a72;
+  --text-3: #7690a8;
+  --rule: #c6dbeb;
+  --rule-strong: #a9c4da;
+  --blue: #0a5fb4;
+  --on-blue: #ffffff;
+  --red: #cf3030;
+}
+
+:root[data-theme="sepia"] {
+  color-scheme: light;
+  --desk: #ebe3d3;
+  --pane: #f3ecdd;
+  --sheet: #fbf6ea;
+  --paper: #fbf6ea;
+  --paper-text: #3a2f22;
+  --paper-text-2: #6a5a45;
+  --paper-rule: #ddd3be;
+  --paper-blue: #8a4b12;
+  --text: #3a2f22;
+  --text-2: #6a5a45;
+  --text-3: #8f7f69;
+  --rule: #d9cfba;
+  --rule-strong: #bfb299;
+  --blue: #8a4b12;
+  --on-blue: #fbf6ea;
+  --red: #b3261e;
+}
+
+:root[data-theme="rose"] {
+  color-scheme: light;
+  --desk: #f4e6ea;
+  --pane: #f9eff2;
+  --sheet: #fffafb;
+  --paper: #fffafb;
+  --text: #2c1a22;
+  --text-2: #6a4a58;
+  --text-3: #94777f;
+  --rule: #e5d0d7;
+  --rule-strong: #cfb2bd;
+  --blue: #a1204f;
+  --on-blue: #fffafb;
+  --paper-blue: #a1204f;
+  --red: #c0262d;
+}
+
+:root[data-theme="contrast-light"] {
+  color-scheme: light;
+  --desk: #ffffff;
+  --pane: #ffffff;
+  --sheet: #ffffff;
+  --paper: #ffffff;
+  --paper-text: #000000;
+  --paper-text-2: #1a1a1a;
+  --paper-rule: #6b6b6b;
+  --paper-blue: #0000cc;
+  --text: #000000;
+  --text-2: #1a1a1a;
+  --text-3: #595959;
+  --rule: #6b6b6b;
+  --rule-strong: #000000;
+  --blue: #0000cc;
+  --on-blue: #ffffff;
+  --red: #b00000;
+}
+
+:root[data-theme="contrast-dark"] {
+  color-scheme: dark;
+  --desk: #000000;
+  --pane: #000000;
+  --sheet: #0a0a0a;
+  --text: #ffffff;
+  --text-2: #e6e6e6;
+  --text-3: #a6a6a6;
+  --rule: #8a8a8a;
+  --rule-strong: #ffffff;
+  --blue: #9cc2ff;
+  --on-blue: #000000;
+  --red: #ff8f8f;
+}

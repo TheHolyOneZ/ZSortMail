@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "zsm-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "ZSortMail application service: the one object the desktop shell and the dev server both drive"
+publish = false
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+specta = { workspace = true }
+jiff = { workspace = true }
+base64 = { workspace = true }
+rand = { workspace = true }
+html-escape = { workspace = true }
+zsm-core = { path = "../zsm-core", features = ["specta"] }
+zsm-mime = { path = "../zsm-mime" }
+zsm-gmail = { path = "../zsm-gmail" }
+tokio = { workspace = true }
+url = { workspace = true }
+reqwest = { version = "0.13", default-features = false, features = ["form", "rustls", "http2"] }
+
+[dev-dependencies]
+zsm-testkit = { path = "../zsm-testkit" }
+tokio = { workspace = true, features = ["test-util"] }

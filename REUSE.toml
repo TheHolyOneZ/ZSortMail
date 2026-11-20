@@ -1,0 +1,9 @@
+version = 1
+SPDX-PackageName = "ZSortMail"
+SPDX-PackageSupplier = "ZSortMail contributors"
+
+[[annotations]]
+path = "**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "ZSortMail contributors"
+SPDX-License-Identifier = "GPL-3.0-or-later"

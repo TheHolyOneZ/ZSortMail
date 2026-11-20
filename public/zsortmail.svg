@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="ZSortMail">
+  <defs>
+    <pattern id="airmail" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="14" height="56" fill="#d73431"/>
+      <rect x="28" width="14" height="56" fill="#2a64a8"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="#172135"/>
+  <!-- A Z made from one strip of paper folded twice. -->
+  <path d="M236 262h552v132H236z" fill="#fdfcf9"/>
+  <path d="M236 262h552v22H236z" fill="url(#airmail)"/>
+  <path d="M788 394H578L236 630h210z" fill="#c9d6e4"/>
+  <path d="M236 630h552v132H236z" fill="#fdfcf9"/>
+  <path d="M578 394h210M236 630h210" stroke="#9fb1c5" stroke-width="3" fill="none"/>
+</svg>
