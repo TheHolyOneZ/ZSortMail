@@ -13,6 +13,7 @@
 </p>
 
 <p align="center">
+  <a href="https://zsync.eu/zsortmail/">Website</a> &nbsp;·&nbsp;
   <a href="#what-it-is">What it is</a> &nbsp;·&nbsp;
   <a href="#a-look-around">Screenshots</a> &nbsp;·&nbsp;
   <a href="#what-it-does">Features</a> &nbsp;·&nbsp;
@@ -129,7 +130,7 @@ Hide, show and reorder the sidebar tabs and pin categories there. Drag any divid
 
 ## Install
 
-Installers for each system are on the Releases page when a version is tagged: an AppImage, deb and rpm for Linux, an installer for Windows (it installs for the current user, no administrator needed), and a dmg for macOS.
+Installers for each system are on the [website](https://zsync.eu/zsortmail/) and on the Releases page when a version is tagged: an AppImage, deb and rpm for Linux, an installer for Windows (it installs for the current user, no administrator needed), and a dmg for macOS.
 
 These builds are not signed yet, so each system will complain the first time:
 

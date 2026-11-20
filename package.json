@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "Local-first Gmail client organised around people",
   "license": "GPL-3.0-or-later",
+  "homepage": "https://zsync.eu/zsortmail/",
   "type": "module",
   "packageManager": "pnpm@12.17.0",
   "engines": {

@@ -226,3 +226,27 @@ test('the Google setup guide', async ({ page }) => {
   await settle(page, 700);
   await page.screenshot({ path: out('google-guide') });
 });
+
+test('the Google setup guide, close up, for the website', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    deviceScaleFactor: 2,
+  });
+  const page = await context.newPage();
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'zsm-ui',
+      JSON.stringify({
+        state: { theme: 'light', categoriesFirst: false, motion: 'off' },
+        version: 0,
+      }),
+    ),
+  );
+  await page.goto(url('/settings'));
+  await page.getByRole('button', { name: 'Set up Google access' }).first().click();
+  const guide = page.getByRole('dialog', { name: 'Set up Google access' });
+  for (let i = 0; i < 4; i++) await guide.getByRole('button', { name: 'Done, next step' }).click();
+  await page.waitForTimeout(800);
+  await guide.screenshot({ path: 'test-results/site/guide.png' });
+  await context.close();
+});
