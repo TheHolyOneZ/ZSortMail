@@ -206,6 +206,8 @@ jobs:
       - name: Checksums
         working-directory: out
         run: |
+          find . -mindepth 2 -type f -exec mv -t . {} +
+          find . -mindepth 1 -type d -empty -delete
           ls -l
           sha256sum * > SHA256SUMS.txt
           cat SHA256SUMS.txt
