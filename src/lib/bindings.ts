@@ -365,6 +365,7 @@ export type MessageView = {
 	from_email: string,
 	to: MailAddress[],
 	cc: MailAddress[],
+	bcc: MailAddress[],
 	preview: string,
 	text: string,
 	quoted: string | null,

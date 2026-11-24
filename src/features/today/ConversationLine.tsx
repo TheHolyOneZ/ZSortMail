@@ -4,6 +4,7 @@ import type { ConversationRow } from '@/lib/bindings';
 import { cn } from '@/lib/cn';
 import { writeToPerson } from '@/lib/composer';
 import { conversationMenu } from '@/lib/menus';
+import { useUi } from '@/lib/store';
 import { useContextMenu } from '@/ui/ContextMenu';
 import { Stamp } from '@/ui/Stamp';
 
@@ -23,6 +24,7 @@ export function ConversationLine({
   onOpen?: () => void;
 }) {
   const navigate = useNavigate();
+  const floating = useUi((s) => s.rowActions) === 'hover';
   const { onContextMenu, menu } = useContextMenu();
   const c = row.conversation;
   const unread = c.unread > 0;
@@ -40,7 +42,7 @@ export function ConversationLine({
     <li
       aria-current={selected ? 'true' : undefined}
       className={cn(
-        'group flex items-center gap-3 border-b border-rule',
+        'group relative flex items-center gap-3 border-b border-rule',
         selected && 'bg-blue-wash',
       )}
       onContextMenu={onContextMenu(() =>
@@ -91,11 +93,23 @@ export function ConversationLine({
           </span>
         </span>
       </button>
-      {actions && (
-        <div className="flex shrink-0 items-center gap-0.5 opacity-70 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-          {actions}
-        </div>
-      )}
+      {actions &&
+        (floating ? (
+          <div
+            className={cn(
+              'absolute end-2 top-1/2 z-10 flex -translate-y-1/2 items-center gap-0.5 rounded-pop border border-rule-strong bg-sheet px-1 shadow-sheet',
+              'pointer-events-none translate-x-1.5 opacity-0 transition-[opacity,translate] duration-[var(--dur-quick)] ease-[var(--ease-settle)]',
+              'group-focus-within:pointer-events-auto group-focus-within:translate-x-0 group-focus-within:opacity-100',
+              'group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100',
+            )}
+          >
+            {actions}
+          </div>
+        ) : (
+          <div className="flex shrink-0 items-center gap-0.5 opacity-70 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+            {actions}
+          </div>
+        ))}
       {menu}
     </li>
   );

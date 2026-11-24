@@ -104,6 +104,13 @@ export const en = {
   'set.mirror_title': 'Also make tags in Gmail',
   'set.mirror_hint':
     'When you tag a conversation here, put the same label on the thread in Gmail. Labels are only added or taken off a thread, never deleted. Off by default; it needs a linked Gmail account.',
+  'set.start_page': 'Open on',
+  'set.start_page_hint': 'The screen you land on when the app starts.',
+  'set.row_actions': 'Row buttons',
+  'set.row_actions_hint':
+    'Archive, snooze and trash on each conversation. On hover leaves the text more room.',
+  'set.on_hover': 'On hover',
+  'set.always': 'Always',
   'set.start_categories': 'Start with categories',
   'set.start_categories_hint':
     'People opens on your categories (Everyone, Favourites and the ones you made). Turn it off to open straight on everyone.',
@@ -132,6 +139,9 @@ export const en = {
   'mail.show_more': 'Show more',
   'people.add': 'Add people',
   'people.edit_category': 'Edit category',
+  'people.write_all': 'Write to everyone',
+  'people.write_all_hint':
+    'Starts a message to everyone here. They go in Bcc, so nobody sees the others’ addresses.',
 
   'nav.write': 'Write',
 } as const;

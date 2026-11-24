@@ -107,6 +107,13 @@ export const de: Catalog = {
   'set.mirror_title': 'Tags auch in Gmail anlegen',
   'set.mirror_hint':
     'Wenn du hier eine Unterhaltung taggst, bekommt der Verlauf in Gmail dasselbe Label. Labels werden nur hinzugefügt oder entfernt, nie gelöscht. Standardmäßig aus; erfordert ein verknüpftes Gmail-Konto.',
+  'set.start_page': 'Beim Start öffnen',
+  'set.start_page_hint': 'Der Bildschirm, mit dem die App startet.',
+  'set.row_actions': 'Schaltflächen in der Liste',
+  'set.row_actions_hint':
+    'Archivieren, Zurückstellen und Papierkorb an jeder Unterhaltung. Beim Darüberfahren bleibt mehr Platz für den Text.',
+  'set.on_hover': 'Beim Darüberfahren',
+  'set.always': 'Immer',
   'set.start_categories': 'Mit Kategorien starten',
   'set.start_categories_hint':
     'Personen öffnet mit deinen Kategorien (Alle, Favoriten und deine eigenen). Ausgeschaltet öffnet es direkt bei allen.',
@@ -135,6 +142,9 @@ export const de: Catalog = {
   'mail.show_more': 'Mehr anzeigen',
   'people.add': 'Personen hinzufügen',
   'people.edit_category': 'Kategorie bearbeiten',
+  'people.write_all': 'An alle schreiben',
+  'people.write_all_hint':
+    'Beginnt eine Nachricht an alle hier. Sie stehen in Bcc, sodass niemand die Adressen der anderen sieht.',
 
   'nav.write': 'Schreiben',
 };

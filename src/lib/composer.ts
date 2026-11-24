@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { looksLikeEmail } from '@/lib/addresses';
 import { api } from '@/lib/api';
 import type { Address, Draft, DraftMode } from '@/lib/bindings';
 import { toastError } from '@/lib/toasts';
@@ -28,6 +29,42 @@ export async function compose(to: Address[] = []): Promise<void> {
   try {
     const draft = await api.newDraft(to);
     useComposer.getState().show(draft.id, to.length > 0 ? 'body' : 'to', draft);
+  } catch (error) {
+    toastError(error);
+  }
+}
+
+export async function categoryAddresses(id: number): Promise<Address[]> {
+  const members = await api.listCategoryMembers(id);
+  const seen = new Set<string>();
+  const out: Address[] = [];
+  for (const m of members) {
+    const email = m.email.trim().toLowerCase();
+    if (!looksLikeEmail(email) || seen.has(email)) continue;
+    seen.add(email);
+    out.push({ email, name: m.alias ?? m.person.name });
+  }
+  return out;
+}
+
+export async function writeToCategory(id: number, name: string): Promise<void> {
+  try {
+    const everyone = await categoryAddresses(id);
+    if (everyone.length === 0) {
+      toastError(new Error(`Nobody in ${name} has an email address yet.`));
+      return;
+    }
+    const draft = await api.newDraft([]);
+    await api.saveDraft({
+      id: draft.id,
+      to: [],
+      cc: [],
+      bcc: everyone,
+      subject: draft.subject,
+      body_html: draft.body_html,
+      nudge_days: draft.nudge_days,
+    });
+    useComposer.getState().show(draft.id, 'body');
   } catch (error) {
     toastError(error);
   }

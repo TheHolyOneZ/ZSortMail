@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { useBackend } from '@/lib/backend';
 import { compose, openDraft } from '@/lib/composer';
 import { bindingFor, matches } from '@/lib/keymap';
+import { listenForMailto } from '@/lib/mailto';
 import { usePalette } from '@/lib/palette';
 import { useStoreEvents } from '@/lib/queries';
 import { useApplyUiPreferences, useUi } from '@/lib/store';
@@ -21,6 +22,10 @@ export function Shell() {
   useApplyUiPreferences();
   useStoreEvents();
   useNotifications();
+  useEffect(() => {
+    const stop = listenForMailto();
+    return () => void stop.then((off) => off());
+  }, []);
   const syncing = useBackend((s) => s.sync.phase === 'reading' || s.sync.phase === 'catching');
   useEffect(() => {
     function onKey(e: KeyboardEvent) {

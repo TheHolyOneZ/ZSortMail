@@ -395,6 +395,7 @@ mod tests {
                 from: Address::new("a@b.example", Some("Ann Bee")),
                 to: vec![Address::new("me@example.com", None)],
                 cc: vec![],
+                bcc: Vec::new(),
                 subject: "Hello".into(),
                 sent_at: NOW - 5000,
                 snippet: None,

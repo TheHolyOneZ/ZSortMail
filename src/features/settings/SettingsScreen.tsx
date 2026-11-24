@@ -16,7 +16,7 @@ import {
   type SidebarTab,
   setTabShown,
 } from '@/lib/sidebar';
-import { type Density, useUi } from '@/lib/store';
+import { type Density, type RowActions, type StartPage, useUi } from '@/lib/store';
 import { toast, toastError } from '@/lib/toasts';
 import type { Key } from '@/locales/en';
 import type { MotionPreference } from '@/motion/governor';
@@ -344,6 +344,10 @@ export function SettingsScreen() {
     setTidyLetters,
     categoriesFirst,
     setCategoriesFirst,
+    startPage,
+    setStartPage,
+    rowActions,
+    setRowActions,
     language,
     setLanguage,
   } = useUi();
@@ -391,6 +395,31 @@ export function SettingsScreen() {
             options={[
               { value: 'comfortable', label: t('set.comfortable') },
               { value: 'compact', label: t('set.compact') },
+            ]}
+          />
+        </Row>
+
+        <Row title={t('set.start_page')} hint={t('set.start_page_hint')}>
+          <Segmented<StartPage>
+            label={t('set.start_page')}
+            value={startPage}
+            onChange={setStartPage}
+            options={[
+              { value: 'people', label: t('nav.people') },
+              { value: 'mail', label: t('nav.mail') },
+              { value: 'today', label: t('nav.today') },
+            ]}
+          />
+        </Row>
+
+        <Row title={t('set.row_actions')} hint={t('set.row_actions_hint')}>
+          <Segmented<RowActions>
+            label={t('set.row_actions')}
+            value={rowActions}
+            onChange={setRowActions}
+            options={[
+              { value: 'hover', label: t('set.on_hover') },
+              { value: 'always', label: t('set.always') },
             ]}
           />
         </Row>

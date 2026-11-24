@@ -590,6 +590,7 @@ impl Store {
             from: Address::new(&me, None),
             to: normalised(&draft.to),
             cc: normalised(&draft.cc),
+            bcc: normalised(&draft.bcc),
             subject: draft.subject.trim().to_string(),
             sent_at: now,
             snippet: None,
@@ -1051,6 +1052,33 @@ mod tests {
         assert_eq!(detail.messages[0].text, "Nice to meet you");
         let html = store.message_html(ticket.message_id).unwrap().unwrap();
         assert!(html.contains("<b>meet</b>") && !html.contains("script"), "what is sent is the sanitized form: {html}");
+    }
+
+    #[test]
+    fn a_sent_message_remembers_who_it_was_blind_copied_to() {
+        let mut store = demo();
+        let id = store.new_draft(1, &[a("to.person@elsewhere.example")], NOW).unwrap();
+        store
+            .save_draft(
+                &DraftInput {
+                    id,
+                    to: vec![a("to.person@elsewhere.example")],
+                    cc: vec![],
+                    bcc: vec![a("Quiet@Elsewhere.example")],
+                    subject: "Quietly".into(),
+                    body_html: "<p>Hello</p>".into(),
+                    nudge_days: None,
+                },
+                NOW,
+            )
+            .unwrap();
+        let ticket = store.send_draft(id, NOW, 10_000).unwrap();
+        let person = store.list_people(PeopleFilter::All, "to.person").unwrap().remove(0);
+        let convo = store.list_conversations(person.id).unwrap().remove(0);
+        let detail = store.get_conversation(convo.id, Some(person.id)).unwrap().unwrap();
+        let sent = detail.messages.iter().find(|m| m.id == ticket.message_id).unwrap();
+        assert_eq!(sent.to.len(), 1);
+        assert_eq!(sent.bcc.iter().map(|b| b.email.as_str()).collect::<Vec<_>>(), ["quiet@elsewhere.example"]);
     }
 
     #[test]

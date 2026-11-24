@@ -29,7 +29,11 @@ pub fn create_main_window<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Webvi
         .find(|w| w.label == MAIN_WINDOW)
         .cloned()
         .ok_or_else(|| tauri::Error::WindowNotFound)?;
-    WebviewWindowBuilder::from_config(app, &config)?
+    let mut builder = WebviewWindowBuilder::from_config(app, &config)?;
+    if let Some(script) = crate::mailto::script() {
+        builder = builder.initialization_script(script);
+    }
+    builder
         .disable_drag_drop_handler()
         .on_navigation(|url| {
             if is_app_url(url) {

@@ -323,6 +323,7 @@ mod tests {
             from: Address::new("news@list.example", Some("The List")),
             to: vec![Address::new("you@zsortmail.demo", None)],
             cc: vec![],
+            bcc: Vec::new(),
             subject: "Issue 1".into(),
             sent_at: core.now_ms(),
             snippet: None,

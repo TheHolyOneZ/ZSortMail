@@ -36,6 +36,7 @@ const MIGRATIONS: &[(&str, &str)] = &[
     ("0005_automation", include_str!("migrations/0005_automation.sql")),
     ("0006_writing", include_str!("migrations/0006_writing.sql")),
     ("0007_categories", include_str!("migrations/0007_categories.sql")),
+    ("0008_bcc", include_str!("migrations/0008_bcc.sql")),
 ];
 
 pub struct Store {

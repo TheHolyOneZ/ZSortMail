@@ -108,7 +108,8 @@ pub(crate) fn message_views(store: &Store, conversation_id: i64) -> Result<Vec<M
     let mut stmt = conn.prepare_cached(
         "SELECT m.id, m.from_person_id, p.display_name, p.ink, p.kind, m.is_from_me, m.sent_at, m.to_addresses,
                 m.snippet, m.body_text, m.body_quoted, m.body_html IS NOT NULL, m.unread, m.starred,
-                m.remote_images, m.trackers_blocked, m.unsubscribe, m.from_address, m.cc_addresses
+                m.remote_images, m.trackers_blocked, m.unsubscribe, m.from_address, m.cc_addresses,
+                m.bcc_addresses
          FROM messages m LEFT JOIN people p ON p.id = m.from_person_id
          WHERE m.conversation_id = ?1 AND m.hidden_at IS NULL ORDER BY m.sent_at, m.id",
     )?;
@@ -132,6 +133,7 @@ pub(crate) fn message_views(store: &Store, conversation_id: i64) -> Result<Vec<M
         };
         let recipients: Vec<Address> = serde_json::from_str(&r.get::<_, String>(7)?).unwrap_or_default();
         let copied: Vec<Address> = serde_json::from_str(&r.get::<_, String>(18)?).unwrap_or_default();
+        let blind: Vec<Address> = serde_json::from_str(&r.get::<_, String>(19)?).unwrap_or_default();
         let label = |a: &Address| MailAddress {
             email: a.email.clone(),
             name: a.name.clone(),
@@ -166,6 +168,7 @@ pub(crate) fn message_views(store: &Store, conversation_id: i64) -> Result<Vec<M
             from_email: from_address.clone(),
             to: recipients.iter().map(label).collect(),
             cc: copied.iter().map(label).collect(),
+            bcc: blind.iter().map(label).collect(),
             preview,
             text,
             quoted: r.get::<_, Option<Vec<u8>>>(10)?.map(|b| decompress(&b)).filter(|q| !q.is_empty()),

@@ -61,6 +61,7 @@ export function MessageDetails({ message: m }: { message: MessageView }) {
     },
   ];
   if (m.cc.length > 0) rows.push({ label: 'Cc', value: m.cc.map(chip) });
+  if (m.bcc.length > 0) rows.push({ label: 'Bcc', value: m.bcc.map(chip) });
   rows.push({ label: 'Date', value: <span>{full(m.sent_at)}</span> });
 
   return (

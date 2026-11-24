@@ -251,6 +251,7 @@ mod tests {
             from: crate::store::ingest::Address::new("a@b.example", Some("A B")),
             to: vec![crate::store::ingest::Address::new("me@example.com", None)],
             cc: vec![],
+            bcc: Vec::new(),
             subject: "Hello".into(),
             sent_at: NOW - 1000,
             snippet: None,

@@ -9,6 +9,8 @@ export const PROFILE_KEYS = [
   'language',
   'tidyLetters',
   'categoriesFirst',
+  'startPage',
+  'rowActions',
   'sidebar',
 ] as const;
 

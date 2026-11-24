@@ -149,6 +149,7 @@ pub struct MessageView {
     pub from_email: String,
     pub to: Vec<MailAddress>,
     pub cc: Vec<MailAddress>,
+    pub bcc: Vec<MailAddress>,
     pub preview: String,
     pub text: String,
     pub quoted: Option<String>,

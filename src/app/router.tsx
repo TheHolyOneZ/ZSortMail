@@ -21,6 +21,7 @@ import { TodayScreen } from '@/features/today/TodayScreen';
 import { WaitingScreen } from '@/features/waiting/WaitingScreen';
 import { api } from '@/lib/api';
 import { qk, queryClient } from '@/lib/queries';
+import { startRoute } from '@/lib/store';
 import { Shell } from './Shell';
 
 async function hasMailbox(): Promise<boolean> {
@@ -43,7 +44,7 @@ const rootRoute = createRootRoute({
     const dev = location.pathname.startsWith('/__');
     const linked = await hasMailbox();
     if (!linked && !onWelcome && !dev) throw redirect({ to: '/welcome' });
-    if (linked && onWelcome) throw redirect({ to: '/people' });
+    if (linked && onWelcome) throw redirect({ to: startRoute() });
   },
 });
 
@@ -57,7 +58,7 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   beforeLoad: () => {
-    throw redirect({ to: '/people' });
+    throw redirect({ to: startRoute() });
   },
 });
 

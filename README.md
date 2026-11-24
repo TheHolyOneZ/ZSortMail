@@ -101,7 +101,8 @@ It is pre-release software. It has been used every day on Linux, against real Gm
 - A rich-text composer with recipient suggestions, drafts that save themselves, reply, reply to all and forward.
 - Undo send inside a window you choose, send later, and "remind me if nobody replies in three days".
 - Routines: recurring or on-demand emails with variables such as the date and weekday. A routine you missed because the computer was asleep runs once, marked late, and will not send by itself if it is badly overdue.
-- A Write button is always in the sidebar, and on every person.
+- A Write button is always in the sidebar, and on every person. Write to a whole category from its page, or type the category's name in the To field. Everyone goes in Bcc when you use the page button, so nobody sees the others' addresses.
+- Click a mailto: link anywhere and ZSortMail opens a message ready to fill in, once you pick it as your mail app (see Install).
 
 **Sorting out the pile**
 
@@ -126,7 +127,7 @@ Link as many Gmail accounts as you like. Each is a profile with its own theme, d
 
 **Make it yours**
 
-Hide, show and reorder the sidebar tabs and pin categories there. Drag any divider. Pick an animation for each kind of movement, or none. Four key sets (ZSortMail, Gmail, Superhuman, Vim) with any single key changeable. English and German. Compact or comfortable spacing. Its own title bar, so it looks the same on every system.
+Hide, show and reorder the sidebar tabs and pin categories there. Drag any divider. Pick an animation for each kind of movement, or none. Four key sets (ZSortMail, Gmail, Superhuman, Vim) with any single key changeable. English and German. Compact or comfortable spacing. Open on People, Mail or Today. Archive, snooze and trash show on hover or all the time. Its own title bar, so it looks the same on every system.
 
 ## Install
 
@@ -139,6 +140,8 @@ These builds are not signed yet, so each system will complain the first time:
 - Linux: make the AppImage executable (`chmod +x ZSortMail_*.AppImage`) and run it, or install the deb or rpm. The window is drawn by WebKitGTK; it has been run on 2.54, and anything from the last couple of years should do.
 
 macOS 12 or newer is needed. Windows 10 or 11 is needed; the app uses the Edge WebView2 runtime, which Windows 11 already has and the installer fetches for Windows 10.
+
+To make it your mail app, so that email links open in it: on Windows open Settings, Apps, Default apps, choose ZSortMail and set it for MAILTO. On macOS open Mail's settings and pick it under Default email reader. On Linux run `xdg-settings set default-url-scheme-handler mailto zsortmail.desktop`. The Windows installer and the deb and rpm register it; the AppImage does not. Registration on Windows and macOS has not been tried on a real machine yet.
 
 Your data lives in `~/.local/share/dev.zsortmail.app` on Linux, `~/Library/Application Support/dev.zsortmail.app` on macOS and `%APPDATA%\dev.zsortmail.app` on Windows. Sign-in tokens are kept in the system keychain (Secret Service, Keychain, Credential Manager), not in that folder. To start over, quit the app and delete the folder.
 

@@ -100,6 +100,7 @@ impl Store {
             from: Address::new(&me, None),
             to,
             cc: Vec::new(),
+            bcc: Vec::new(),
             subject: reply_subject(&subject),
             sent_at: now,
             snippet: None,

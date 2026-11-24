@@ -1,17 +1,24 @@
 import { X } from '@phosphor-icons/react';
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { addressLabel, looksLikeEmail, parseAddresses, sameAddress } from '@/lib/addresses';
-import type { Address } from '@/lib/bindings';
+import type { Address, GroupInfo, RecipientSuggestion } from '@/lib/bindings';
 import { cn } from '@/lib/cn';
+import { categoryAddresses } from '@/lib/composer';
 import { inkFor, stampColor } from '@/lib/ink';
-import { useRecipients } from '@/lib/queries';
+import { useGroups, useRecipients } from '@/lib/queries';
+import { toastError } from '@/lib/toasts';
 import { Stamp } from '@/ui/Stamp';
+import { CategoryBadge } from '../people/CategoryBadge';
 
 const fold = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
 
 export function matches(candidate: string, typed: string): boolean {
   return fold(candidate).includes(fold(typed));
 }
+
+type Suggestion =
+  | { kind: 'category'; key: string; group: GroupInfo }
+  | { kind: 'person'; key: string; person: RecipientSuggestion };
 
 export function RecipientField({
   label,
@@ -50,11 +57,19 @@ export function RecipientField({
   const input = useRef<HTMLInputElement>(null);
   const listId = useId();
   const { data: found = [] } = useRecipients(text);
-  const suggestions = found.filter(
+  const { data: groups = [] } = useGroups();
+  const people = found.filter(
     (s) =>
       !value.some((v) => v.email === s.email.toLowerCase()) &&
       matches(`${s.name} ${s.email}`, text),
   );
+  const categories = text.trim()
+    ? groups.filter((g) => g.members > 0 && matches(g.name, text)).slice(0, 3)
+    : [];
+  const suggestions: Suggestion[] = [
+    ...categories.map((g) => ({ kind: 'category' as const, key: `category:${g.id}`, group: g })),
+    ...people.map((s) => ({ kind: 'person' as const, key: s.email, person: s })),
+  ];
   const shown = open && text.trim().length > 0 && suggestions.length > 0;
   const current = Math.min(active, Math.max(suggestions.length - 1, 0));
 
@@ -67,6 +82,14 @@ export function RecipientField({
     if (fresh.length > 0) onChange([...value, ...fresh]);
     setText('');
     setActive(0);
+  }
+
+  function pick(s: Suggestion) {
+    if (s.kind === 'person') {
+      add([{ email: s.person.email.toLowerCase(), name: s.person.name }]);
+      return;
+    }
+    categoryAddresses(s.group.id).then(add, toastError);
   }
 
   function commit() {
@@ -146,10 +169,10 @@ export function RecipientField({
               e.preventDefault();
               setActive(Math.max(current - 1, 0));
             } else if (e.key === 'Enter' || (e.key === 'Tab' && text.trim())) {
-              const pick = shown ? suggestions[current] : undefined;
-              if (pick) {
+              const chosen = shown ? suggestions[current] : undefined;
+              if (chosen) {
                 e.preventDefault();
-                add([{ email: pick.email.toLowerCase(), name: pick.name }]);
+                pick(chosen);
               } else if (text.trim()) {
                 e.preventDefault();
                 commit();
@@ -177,14 +200,14 @@ export function RecipientField({
         >
           {suggestions.map((s, i) => (
             <div
-              key={s.email}
+              key={s.key}
               id={`${listId}-${i}`}
               role="option"
               aria-selected={i === current}
               tabIndex={-1}
               onPointerDown={(e) => {
                 e.preventDefault();
-                add([{ email: s.email.toLowerCase(), name: s.name }]);
+                pick(s);
                 input.current?.focus();
               }}
               className={cn(
@@ -192,12 +215,25 @@ export function RecipientField({
                 i === current ? 'bg-paper-rule/70' : 'hover:bg-paper-rule/40',
               )}
             >
-              <Stamp name={s.name} ink={s.ink} kind="person" size={24} />
+              {s.kind === 'category' ? (
+                <CategoryBadge
+                  icon={s.group.icon}
+                  ink={s.group.ink}
+                  image={s.group.image}
+                  size={24}
+                />
+              ) : (
+                <Stamp name={s.person.name} ink={s.person.ink} kind="person" size={24} />
+              )}
               <span className="min-w-0 flex-1">
                 <span dir="auto" className="block truncate text-ui font-medium">
-                  {s.name}
+                  {s.kind === 'category' ? s.group.name : s.person.name}
                 </span>
-                <span className="block truncate text-meta text-paper-text-2">{s.email}</span>
+                <span className="block truncate text-meta text-paper-text-2">
+                  {s.kind === 'category'
+                    ? `Category, ${s.group.members === 1 ? '1 person' : `${s.group.members} people`}`
+                    : s.person.email}
+                </span>
               </span>
             </div>
           ))}

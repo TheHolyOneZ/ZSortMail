@@ -1,4 +1,4 @@
-import { CaretLeft, PushPin, UserPlus } from '@phosphor-icons/react';
+import { CaretLeft, PencilSimple, PushPin, UserPlus } from '@phosphor-icons/react';
 import { useNavigate } from '@tanstack/react-router';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { LayoutGroup, motion } from 'motion/react';
@@ -9,6 +9,7 @@ import { useBackend } from '@/lib/backend';
 import type { PeopleFilter, PersonSummary } from '@/lib/bindings';
 import { now } from '@/lib/clock';
 import { cn } from '@/lib/cn';
+import { writeToCategory } from '@/lib/composer';
 import { formatListTime } from '@/lib/format';
 import { useT } from '@/lib/i18n';
 import { stampColor } from '@/lib/ink';
@@ -172,6 +173,14 @@ function PeopleList({ category, selectedId }: { category: string; selectedId?: n
             <Button variant="primary" onClick={() => setAdding(true)}>
               <UserPlus size={14} />
               {t('people.add')}
+            </Button>
+            <Button
+              title={t('people.write_all_hint')}
+              disabled={group.members === 0}
+              onClick={() => void writeToCategory(group.id, group.name)}
+            >
+              <PencilSimple size={14} />
+              {t('people.write_all')}
             </Button>
             <Button onClick={() => setEditingGroup(true)}>{t('people.edit_category')}</Button>
           </div>

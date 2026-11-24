@@ -10,6 +10,7 @@ pub const METADATA_HEADERS: &[&str] = &[
     "From",
     "To",
     "Cc",
+    "Bcc",
     "Subject",
     "Date",
     "Message-ID",
@@ -27,6 +28,7 @@ pub struct ParsedHeaders {
     pub from: Vec<Address>,
     pub to: Vec<Address>,
     pub cc: Vec<Address>,
+    pub bcc: Vec<Address>,
     pub subject: Option<String>,
     pub message_id: Option<String>,
     pub in_reply_to: Option<String>,
@@ -58,6 +60,7 @@ pub fn parse_headers(headers: &[(&str, &str)]) -> ParsedHeaders {
         from: list(message.from()),
         to: list(message.to()),
         cc: list(message.cc()),
+        bcc: list(message.bcc()),
         subject: message.subject().map(str::to_string),
         message_id: message.message_id().map(|id| format!("<{id}>")),
         in_reply_to: message.in_reply_to().and_then(|l| l.first()).map(|id| format!("<{id}>")),
@@ -164,6 +167,7 @@ pub fn to_incoming(msg: &GmailMessage) -> Result<IncomingMessage> {
         from,
         to: parsed.to,
         cc: parsed.cc,
+        bcc: parsed.bcc,
         subject: parsed.subject.unwrap_or_default(),
         sent_at,
         snippet: (!msg.snippet.is_empty()).then(|| html_unescape(&msg.snippet)),
@@ -243,9 +247,24 @@ mod tests {
         assert_eq!(parsed.to[0], Address::new("maya@northwind.example", Some("Okafor, Maya")));
         assert_eq!(parsed.to[1].email, "dan@northwind.example");
         assert_eq!(parsed.cc[0].email, "team@northwind.example");
+        assert!(parsed.bcc.is_empty());
         assert_eq!(parsed.subject.as_deref(), Some("Réservation pour samedi"));
         assert_eq!(parsed.message_id.as_deref(), Some("<abc.123@mail.example>"));
         assert_eq!(parsed.in_reply_to.as_deref(), Some("<prev.1@mail.example>"));
+    }
+
+    #[test]
+    fn a_blind_copy_is_read_from_the_senders_own_copy() {
+        let parsed = parse_headers(&[
+            ("From", "me@example.com"),
+            ("To", "maya@northwind.example"),
+            ("Bcc", "Dan <dan@northwind.example>, boss@northwind.example"),
+        ]);
+        assert_eq!(
+            parsed.bcc.iter().map(|a| a.email.as_str()).collect::<Vec<_>>(),
+            ["dan@northwind.example", "boss@northwind.example"]
+        );
+        assert_eq!(parsed.to.len(), 1, "it does not leak into the visible recipients");
     }
 
     #[test]

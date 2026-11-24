@@ -57,6 +57,7 @@ pub struct IncomingMessage {
     pub from: Address,
     pub to: Vec<Address>,
     pub cc: Vec<Address>,
+    pub bcc: Vec<Address>,
     pub subject: String,
     pub sent_at: i64,
     pub snippet: Option<String>,
@@ -354,6 +355,9 @@ fn ingest_one(tx: &Transaction<'_>, ctx: &IngestContext, msg: &IncomingMessage, 
             "UPDATE messages SET unread = ?1, starred = ?2 WHERE id = ?3",
             params![msg.unread, msg.starred, id],
         )?;
+        if !msg.bcc.is_empty() {
+            tx.execute("UPDATE messages SET bcc_addresses = ?1 WHERE id = ?2", params![addresses_json(&msg.bcc), id])?;
+        }
         let person_ids = people_of_conversation(tx, conversation_id)?;
         return Ok(IngestOutcome {
             message_id: id,
@@ -442,8 +446,8 @@ fn ingest_one(tx: &Transaction<'_>, ctx: &IngestContext, msg: &IncomingMessage, 
         "INSERT INTO messages (account_id, conversation_id, provider_id, rfc_message_id, in_reply_to, from_person_id,
             from_address, to_addresses, cc_addresses, subject, snippet, sent_at, is_from_me, unread, starred,
             size_bytes, body_state, body_text, body_quoted, body_html, remote_images, trackers_blocked, list_id,
-            unsubscribe, category, participants)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26)",
+            unsubscribe, category, participants, bcc_addresses)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27)",
     )?
     .execute(params![
         account_id,
@@ -472,6 +476,7 @@ fn ingest_one(tx: &Transaction<'_>, ctx: &IngestContext, msg: &IncomingMessage, 
         unsubscribe,
         category_str(class.category),
         participants,
+        addresses_json(&msg.bcc),
     ])?;
     let message_id = tx.last_insert_rowid();
 

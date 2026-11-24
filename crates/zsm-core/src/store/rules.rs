@@ -439,6 +439,7 @@ pub(crate) mod tests {
             from: Address::new(from, None),
             to: vec![Address::new("you@zsortmail.demo", None)],
             cc: vec![],
+            bcc: Vec::new(),
             subject: subject.into(),
             sent_at: NOW,
             snippet: None,

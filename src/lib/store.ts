@@ -31,6 +31,23 @@ export const PANE_LIMITS = {
 } as const;
 export type Density = 'comfortable' | 'compact';
 export type PeopleView = 'list' | 'wall';
+export type StartPage = 'people' | 'mail' | 'today';
+export type RowActions = 'hover' | 'always';
+
+export const START_ROUTES: Record<StartPage, '/people' | '/river' | '/today'> = {
+  people: '/people',
+  mail: '/river',
+  today: '/today',
+};
+
+export function isStartPage(value: unknown): value is StartPage {
+  return value === 'people' || value === 'mail' || value === 'today';
+}
+
+export function startRoute(): '/people' | '/river' | '/today' {
+  const page = useUi.getState().startPage;
+  return START_ROUTES[isStartPage(page) ? page : 'people'];
+}
 
 interface UiState {
   theme: ThemePreference;
@@ -54,6 +71,8 @@ interface UiState {
   railOpen: boolean;
   tidyLetters: boolean;
   categoriesFirst: boolean;
+  startPage: StartPage;
+  rowActions: RowActions;
   sidebar: SidebarLayout;
   profiles: ProfilesState;
   adoptAccounts: (emails: string[]) => string[];
@@ -71,6 +90,8 @@ interface UiState {
   setRailOpen: (open: boolean) => void;
   setTidyLetters: (tidy: boolean) => void;
   setCategoriesFirst: (on: boolean) => void;
+  setStartPage: (page: StartPage) => void;
+  setRowActions: (mode: RowActions) => void;
   setSidebar: (layout: SidebarLayout) => void;
   setPeopleFilter: (filter: PeopleFilter) => void;
   setPeopleCategory: (category: string | null) => void;
@@ -89,6 +110,8 @@ function defaultSettings(): Snapshot {
     language: 'en',
     tidyLetters: true,
     categoriesFirst: true,
+    startPage: 'people',
+    rowActions: 'hover',
     sidebar: DEFAULT_SIDEBAR,
   });
 }
@@ -128,6 +151,8 @@ export const useUi = create<UiState>()(
         set((st) => ({ paneWidths: { ...st.paneWidths, [pane]: DEFAULT_PANES[pane] } })),
       tidyLetters: true,
       categoriesFirst: true,
+      startPage: 'people',
+      rowActions: 'hover',
       sidebar: DEFAULT_SIDEBAR,
       profiles: NO_PROFILES,
       adoptAccounts: (emails) => {
@@ -158,6 +183,8 @@ export const useUi = create<UiState>()(
       setRailOpen: (railOpen) => set({ railOpen }),
       setTidyLetters: (tidyLetters) => set({ tidyLetters }),
       setCategoriesFirst: (categoriesFirst) => set({ categoriesFirst }),
+      setStartPage: (startPage) => set({ startPage }),
+      setRowActions: (rowActions) => set({ rowActions }),
       setSidebar: (sidebar) => set({ sidebar }),
       setPeopleFilter: (peopleFilter) => set({ peopleFilter }),
       setPeopleCategory: (peopleCategory) => set({ peopleCategory }),
@@ -178,6 +205,8 @@ export const useUi = create<UiState>()(
         merged.sidebar = cleanSidebar(merged.sidebar);
         merged.profiles = { ...NO_PROFILES, ...(merged.profiles ?? {}) };
         merged.customThemes = Array.isArray(merged.customThemes) ? merged.customThemes : [];
+        if (!isStartPage(merged.startPage)) merged.startPage = 'people';
+        if (merged.rowActions !== 'always') merged.rowActions = 'hover';
         if (!isTheme(merged.theme)) merged.theme = 'system';
         if (
           merged.theme.startsWith(CUSTOM_PREFIX) &&
@@ -200,6 +229,8 @@ export const useUi = create<UiState>()(
         customThemes: s.customThemes,
         tidyLetters: s.tidyLetters,
         categoriesFirst: s.categoriesFirst,
+        startPage: s.startPage,
+        rowActions: s.rowActions,
         sidebar: s.sidebar,
         profiles: s.profiles,
       }),

@@ -1,6 +1,7 @@
 mod commands;
 mod error;
 mod events;
+mod mailto;
 mod notifications;
 mod protocol;
 #[cfg(debug_assertions)]
@@ -209,8 +210,9 @@ pub fn run() {
     export_bindings(&specta_builder::<tauri::Wry>());
 
     let app = configure(tauri::Builder::default())
-        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
-            windows::show_main_window(app);
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| match mailto::find(&argv) {
+            Some(url) => mailto::deliver(app, &url),
+            None => windows::show_main_window(app),
         }))
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_notification::init())
@@ -232,6 +234,9 @@ pub fn run() {
             tray::setup(app)?;
             #[cfg(debug_assertions)]
             app.manage(spikes::Beacon::start()?);
+            if let Some(url) = mailto::find(std::env::args().skip(1)) {
+                mailto::hold(url);
+            }
             windows::create_main_window(app.handle())?;
 
             let handle = app.handle().clone();
@@ -260,6 +265,12 @@ pub fn run() {
             && !*has_visible_windows
         {
             windows::show_main_window(app);
+        }
+        #[cfg(target_os = "macos")]
+        if let RunEvent::Opened { urls } = &event {
+            for url in urls.iter().filter(|u| u.scheme() == "mailto") {
+                mailto::deliver(app, url.as_str());
+            }
         }
         #[cfg(not(target_os = "macos"))]
         let _ = app;
