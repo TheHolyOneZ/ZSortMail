@@ -164,9 +164,13 @@ test('a message sent with a blind copy shows the Bcc in its details', async ({ p
       nudge_days: null,
     },
   });
-  const ticket = await ipc<{ person_id: number; conversation_id: number }>(page, 'send_draft', {
-    id: draft.id,
-  });
+  const ticket = await ipc<{ person_id: number; conversation_id: number; message_id: number }>(
+    page,
+    'send_draft',
+    {
+      id: draft.id,
+    },
+  );
   await page.goto(url(`/people/${ticket.person_id}/c/${ticket.conversation_id}`));
   const strand = page.getByRole('region', { name: 'Conversation', exact: true });
   await strand.getByRole('button', { name: 'Details' }).first().click();
