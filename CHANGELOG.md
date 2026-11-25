@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+
+Notifications, from the second round of issues.
+
+- Settings, Notifications, Every new message from people: notify when someone you already write to sends something new. Off by default. New senders, newsletters, receipts and automated mail stay quiet, and quiet hours, Focus mode, muting and hiding still apply. (#7)
+- Settings, Notifications, Send a test: shows a notification at once and records it in the log, and shows the error if the system refuses. (#7)
+- The notification log now records every new message from a person, notified or not, and says why a message did not notify. It has Everything, Notified and Not notified filters and keeps the newest 500. (#9)
+- The notification settings say what each switch does: Notify me, and Mail Gmail marks as important, which adds to what notifies. (#8)
+- Version 0.1.2.
+
 ## 0.1.1
 
 Fixes and small additions from the first round of issues.

@@ -242,10 +242,39 @@ test('notification settings are remembered and the log starts empty and explains
     fullPage: true,
   });
   await ipc(page, 'save_notification_settings', {
-    settings: { enabled: true, quiet: null, focus: false, important: false },
+    settings: { enabled: true, quiet: null, focus: false, important: false, everyone: false },
   });
 
-  await page.getByRole('link', { name: /See what was notified/ }).click();
+  await page.getByRole('link', { name: /See every new message/ }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Notification log' })).toBeVisible();
-  await expect(page.getByText('Nothing has been notified yet.')).toBeVisible();
+  await expect(page.getByText(/Nothing yet\. New mail from people/)).toBeVisible();
+});
+
+test('a test notification can be sent and shows up in the log, and the log can be filtered', async ({
+  page,
+}) => {
+  await page.goto(url('/settings'));
+  const everyone = page.getByRole('switch', { name: 'Every new message from people' });
+  await expect(everyone).not.toBeChecked();
+  await everyone.click();
+  await expect(everyone).toBeChecked();
+  await expect
+    .poll(
+      async () => (await ipc<{ everyone: boolean }>(page, 'get_notification_settings')).everyone,
+    )
+    .toBe(true);
+  await everyone.click();
+  await expect(everyone).not.toBeChecked();
+
+  await page.getByRole('button', { name: 'Send a test' }).click();
+  await expect(page.getByText('Test notification sent')).toBeVisible();
+
+  await page.getByRole('link', { name: /See every new message/ }).click();
+  const log = page.getByRole('region', { name: 'Notification log' });
+  await expect(log.getByText('Notified. You asked for a test')).toBeVisible();
+  await log.getByRole('button', { name: /^Not notified/ }).click();
+  await expect(log.getByText('Notified. You asked for a test')).toBeHidden();
+  await log.getByRole('button', { name: /^Notified/ }).click();
+  await expect(log.getByText('Notified. You asked for a test')).toBeVisible();
+  await page.screenshot({ path: 'test-results/screens/notification-log.png' });
 });

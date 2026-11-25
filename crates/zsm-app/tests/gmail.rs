@@ -337,6 +337,7 @@ async fn quiet_hours_hold_back_a_normal_watch_but_not_an_urgent_one_and_both_are
             quiet: Some(QuietHours { from: 9 * 60, to: 11 * 60 }),
             focus: false,
             important: false,
+            everyone: false,
         })
         .unwrap();
     rig.core.save_watch(&watch("alpha", WatchPriority::Normal)).unwrap();
@@ -657,4 +658,55 @@ async fn gmail_labels_show_the_names_you_gave_them_not_their_ids() {
     })
     .await;
     assert!(!rig.core.conversation_tags(convo.id).unwrap().iter().any(|t| t.name == "Label_1"), "no bare ids");
+}
+
+#[tokio::test]
+async fn ordinary_mail_is_logged_as_not_notified_until_everyone_is_switched_on() {
+    let rig = rig().await;
+    rig.fake.add_message(mail("Maya <maya@northwind.example>", "First", "one", 2));
+    link(&rig).await;
+    eventually("first sync", || (people(&rig.core).len() == 1).then_some(())).await;
+
+    rig.fake.add_message(mail("Maya <maya@northwind.example>", "Lunch?", "are you free", 0));
+    let quiet = eventually("the quiet arrival to be logged", || {
+        rig.core.notification_log().unwrap().into_iter().find(|n| n.body == "Lunch?")
+    })
+    .await;
+    assert!(!quiet.shown);
+    assert!(quiet.reason.contains("not a favourite") && quiet.reason.contains("off in Settings"), "{}", quiet.reason);
+    assert!(rig.desktop.0.lock().unwrap().is_empty(), "nothing interrupted");
+
+    rig.fake.add_message(mail("Dan <dan@northwind.example>", "Hello", "we have not met", 0));
+    let stranger = eventually("the stranger to be logged", || {
+        rig.core.notification_log().unwrap().into_iter().find(|n| n.body == "Hello")
+    })
+    .await;
+    assert!(!stranger.shown && stranger.reason.contains("New senders"), "{}", stranger.reason);
+
+    rig.core
+        .save_notification_settings(&NotificationSettings {
+            enabled: true,
+            quiet: None,
+            focus: false,
+            important: false,
+            everyone: true,
+        })
+        .unwrap();
+    rig.fake.add_message(mail("Maya <maya@northwind.example>", "Plans", "saturday", 0));
+    let notice = eventually("the notification", || rig.desktop.0.lock().unwrap().first().cloned()).await;
+    assert_eq!(notice.title, "Maya");
+    assert!(notice.body.starts_with("Plans"), "{}", notice.body);
+    let shown = rig.core.notification_log().unwrap().into_iter().find(|n| n.body.starts_with("Plans")).unwrap();
+    assert!(shown.shown && shown.reason == "New mail from Maya", "{}", shown.reason);
+}
+
+#[tokio::test]
+async fn a_test_notification_reaches_the_desktop_and_is_logged() {
+    let rig = rig().await;
+    rig.core.send_test_notification().unwrap();
+    let sent = rig.desktop.0.lock().unwrap().clone();
+    assert_eq!(sent.len(), 1);
+    assert!(sent[0].urgent && sent[0].body.contains("notifications reach your desktop"));
+    let log = rig.core.notification_log().unwrap();
+    assert_eq!((log.len(), log[0].shown, log[0].reason.as_str()), (1, true, "You asked for a test"));
 }

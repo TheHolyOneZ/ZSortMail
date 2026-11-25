@@ -16,4 +16,8 @@ impl<R: Runtime> Platform for DesktopNotifications<R> {
             tracing::warn!(%err, "the desktop would not show a notification");
         }
     }
+
+    fn test(&self, notice: &Notice) -> Result<(), String> {
+        self.0.notification().builder().title(&notice.title).body(&notice.body).show().map_err(|err| err.to_string())
+    }
 }

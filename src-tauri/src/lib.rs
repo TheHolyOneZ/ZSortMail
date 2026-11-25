@@ -74,6 +74,7 @@ macro_rules! all_commands {
             commands::snooze_conversation,
             commands::get_notification_settings,
             commands::save_notification_settings,
+            commands::send_test_notification,
             commands::list_notifications,
             commands::open_notification,
             commands::get_compose_settings,

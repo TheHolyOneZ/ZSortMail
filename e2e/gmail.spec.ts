@@ -188,7 +188,7 @@ test('a watch fires when the mail arrives, with the numbers pulled out of it', a
   await toast.getByRole('button', { name: 'Open' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Out for delivery' })).toBeVisible();
   await page.goto(url('/notifications'));
-  await expect(page.getByText(/Shown\. You are waiting for “xbox 394”/)).toBeVisible();
+  await expect(page.getByText(/Notified\. You are waiting for “xbox 394”/)).toBeVisible();
   expect(errors).toEqual([]);
 });
 

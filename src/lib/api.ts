@@ -138,6 +138,7 @@ export const api = {
   getNotificationSettings: (): Promise<NotificationSettings> => commands.getNotificationSettings(),
   saveNotificationSettings: (settings: NotificationSettings): Promise<null> =>
     commands.saveNotificationSettings(settings),
+  sendTestNotification: (): Promise<null> => commands.sendTestNotification(),
   listNotifications: (): Promise<NotificationRecord[]> => commands.listNotifications(),
   openNotification: (id: number): Promise<number | null> => commands.openNotification(id),
   prepareAttachment: (id: number): Promise<null> => commands.prepareAttachment(id),

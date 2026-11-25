@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
+use zsm_core::dto::Category;
 use zsm_core::extract::Extracted;
 use zsm_core::store::ingest::BatchOutcome;
 use zsm_core::store::notifications::{ArrivalInfo, NewNotification, NotificationKind, NotificationRecord};
 use zsm_core::store::watches::{WatchHit, WatchPriority};
 
 use crate::core::Core;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::events::CoreEvent;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, specta::Type)]
@@ -31,6 +32,11 @@ pub(crate) struct Reminder {
 
 pub trait Platform: Send + Sync + 'static {
     fn notify(&self, notice: &Notice);
+
+    fn test(&self, notice: &Notice) -> std::result::Result<(), String> {
+        self.notify(notice);
+        Ok(())
+    }
 }
 
 pub struct NullPlatform;
@@ -65,11 +71,12 @@ pub struct NotificationSettings {
     pub quiet: Option<QuietHours>,
     pub focus: bool,
     pub important: bool,
+    pub everyone: bool,
 }
 
 impl Default for NotificationSettings {
     fn default() -> Self {
-        Self { enabled: true, quiet: None, focus: false, important: false }
+        Self { enabled: true, quiet: None, focus: false, important: false, everyone: false }
     }
 }
 
@@ -79,6 +86,7 @@ pub(crate) enum Trigger {
     Rule,
     Favourite,
     Important,
+    Everyone,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -107,7 +115,7 @@ pub(crate) fn decide(settings: &NotificationSettings, minute: u16, who: &Arrival
                 None => Verdict::Show(format!("You are waiting for “{name}”")),
             }
         }
-        Trigger::Rule | Trigger::Favourite | Trigger::Important => {
+        Trigger::Rule | Trigger::Favourite | Trigger::Important | Trigger::Everyone => {
             if matches!(trigger, Trigger::Important) && !settings.important {
                 return Verdict::Ignore;
             }
@@ -126,6 +134,7 @@ pub(crate) fn decide(settings: &NotificationSettings, minute: u16, who: &Arrival
             Verdict::Show(match trigger {
                 Trigger::Rule => "A rule asked to be told".into(),
                 Trigger::Favourite => format!("{} is a favourite", who.from_name),
+                Trigger::Everyone => format!("New mail from {}", who.from_name),
                 _ => "Gmail marked it important".into(),
             })
         }
@@ -138,6 +147,36 @@ fn kind_of(t: &Trigger) -> NotificationKind {
         Trigger::Rule => NotificationKind::Rule,
         Trigger::Favourite => NotificationKind::Favourite,
         Trigger::Important => NotificationKind::Important,
+        Trigger::Everyone => NotificationKind::Mail,
+    }
+}
+
+fn why_quiet(settings: &NotificationSettings, who: &ArrivalInfo, category: Option<Category>) -> String {
+    if !settings.enabled {
+        return "Notifications are turned off".into();
+    }
+    if who.hidden {
+        return "It is hidden".into();
+    }
+    if who.screened {
+        return "A new sender, waiting for your decision in New senders".into();
+    }
+    if who.muted {
+        return format!("{} is muted", who.from_name);
+    }
+    if who.important && !settings.important {
+        return "Gmail marked it important, but that setting is off".into();
+    }
+    let only =
+        if settings.everyone { "Only mail from people notifies" } else { "Only favourites, watches and rules notify" };
+    match category {
+        Some(Category::Newsletter) => format!("A newsletter. {only}"),
+        Some(Category::Receipt) => format!("A receipt. {only}"),
+        Some(Category::Automated) => format!("Automated mail. {only}"),
+        _ => format!(
+            "{} is not a favourite and no watch or rule matched. Every new message from people is off in Settings",
+            who.from_name
+        ),
     }
 }
 
@@ -179,6 +218,7 @@ impl Core {
                 quiet,
                 focus: s.setting("notify.focus")?.as_deref() == Some("1"),
                 important: s.setting("notify.important")?.as_deref() == Some("1"),
+                everyone: s.setting("notify.everyone")?.as_deref() == Some("1"),
             })
         })
     }
@@ -188,6 +228,7 @@ impl Core {
             s.set_setting("notify.enabled", if settings.enabled { "1" } else { "0" })?;
             s.set_setting("notify.focus", if settings.focus { "1" } else { "0" })?;
             s.set_setting("notify.important", if settings.important { "1" } else { "0" })?;
+            s.set_setting("notify.everyone", if settings.everyone { "1" } else { "0" })?;
             match settings.quiet {
                 Some(q) if q.from != q.to => s.set_setting(
                     "notify.quiet",
@@ -202,7 +243,7 @@ impl Core {
     }
 
     pub fn notification_log(&self) -> Result<Vec<NotificationRecord>> {
-        self.with_store(|s| Ok(s.list_notifications(200)?))
+        self.with_store(|s| Ok(s.list_notifications(500)?))
     }
 
     pub(crate) fn minute_of_day(&self) -> u16 {
@@ -251,6 +292,9 @@ impl Core {
             if who.important {
                 triggers.push(Trigger::Important);
             }
+            if settings.everyone && out.category == Some(Category::Person) && !who.screened {
+                triggers.push(Trigger::Everyone);
+            }
 
             let mut held: Option<(&Trigger, String)> = None;
             let mut chosen: Option<(&Trigger, String)> = None;
@@ -269,7 +313,26 @@ impl Core {
             let (trigger, reason, shown) = match (chosen, held) {
                 (Some((t, r)), _) => (t, r, true),
                 (None, Some((t, r))) => (t, r, false),
-                (None, None) => continue,
+                (None, None) => {
+                    let reason = why_quiet(&settings, &who, out.category);
+                    let logged = self.with_store(|s| {
+                        Ok(s.log_notification(&NewNotification {
+                            at: now,
+                            kind: NotificationKind::Mail,
+                            title: who.from_name.clone(),
+                            body: who.subject.clone(),
+                            reason,
+                            person_id: who.person_id,
+                            conversation_id: Some(who.conversation_id),
+                            watch_id: None,
+                            draft_id: None,
+                            urgent: false,
+                            shown: false,
+                        })?)
+                    });
+                    touched |= logged.is_ok();
+                    continue;
+                }
             };
             let (title, body) = describe(trigger, &who);
             let urgent = matches!(trigger, Trigger::Watch { urgent: true, .. });
@@ -358,6 +421,40 @@ impl Core {
         Ok(())
     }
 
+    pub fn send_test_notification(&self) -> Result<()> {
+        let notice = Notice {
+            id: 0,
+            title: "ZSortMail".into(),
+            body: "If you can read this, notifications reach your desktop.".into(),
+            conversation_id: None,
+            person_id: None,
+            draft_id: None,
+            urgent: true,
+        };
+        let sent = self.platform.test(&notice);
+        let now = self.now_ms();
+        self.with_store(|s| {
+            Ok(s.log_notification(&NewNotification {
+                at: now,
+                kind: NotificationKind::System,
+                title: notice.title.clone(),
+                body: notice.body.clone(),
+                reason: match &sent {
+                    Ok(()) => "You asked for a test".into(),
+                    Err(err) => format!("You asked for a test, and the system would not show it: {err}"),
+                },
+                person_id: None,
+                conversation_id: None,
+                watch_id: None,
+                draft_id: None,
+                urgent: false,
+                shown: sent.is_ok(),
+            })?)
+        })?;
+        self.changed("notifications", Vec::new());
+        sent.map_err(|err| Error::Io(std::io::Error::other(format!("The system would not show a notification: {err}"))))
+    }
+
     pub fn open_notification(&self, id: i64) -> Result<Option<i64>> {
         let now = self.now_ms();
         let conversation = self.with_store(|s| Ok(s.mark_notification_opened(id, now)?))?;
@@ -386,6 +483,7 @@ mod tests {
             whitelisted: false,
             hidden: false,
             important: false,
+            screened: false,
         }
     }
 
@@ -408,6 +506,39 @@ mod tests {
         let day = QuietHours { from: 9 * 60, to: 17 * 60 };
         assert!(day.contains(12 * 60) && !day.contains(18 * 60));
         assert!(!QuietHours { from: 60, to: 60 }.contains(60));
+    }
+
+    #[test]
+    fn mail_from_people_notifies_only_when_asked_and_respects_muting_and_quiet_hours() {
+        let everyone = NotificationSettings { everyone: true, ..Default::default() };
+        assert!(
+            matches!(decide(&everyone, NOON, &who(), &Trigger::Everyone), Verdict::Show(r) if r == "New mail from DHL Parcel")
+        );
+        let muted = ArrivalInfo { muted: true, ..who() };
+        assert!(matches!(decide(&everyone, NOON, &muted, &Trigger::Everyone), Verdict::Hold(r) if r.contains("muted")));
+        let q = NotificationSettings { everyone: true, ..quiet() };
+        assert!(matches!(decide(&q, NIGHT, &who(), &Trigger::Everyone), Verdict::Hold(r) if r.contains("Quiet hours")));
+    }
+
+    #[test]
+    fn a_message_that_did_not_notify_says_why() {
+        let off = NotificationSettings::default();
+        let on = NotificationSettings { everyone: true, ..Default::default() };
+        let plain = why_quiet(&off, &who(), Some(Category::Person));
+        assert!(plain.contains("not a favourite") && plain.contains("off in Settings"), "{plain}");
+        assert_eq!(
+            why_quiet(&off, &who(), Some(Category::Newsletter)),
+            "A newsletter. Only favourites, watches and rules notify"
+        );
+        assert_eq!(why_quiet(&on, &who(), Some(Category::Receipt)), "A receipt. Only mail from people notifies");
+        let new_sender = ArrivalInfo { screened: true, ..who() };
+        assert!(why_quiet(&on, &new_sender, Some(Category::Person)).contains("New senders"));
+        let hidden = ArrivalInfo { hidden: true, ..who() };
+        assert_eq!(why_quiet(&on, &hidden, Some(Category::Person)), "It is hidden");
+        let important = ArrivalInfo { important: true, ..who() };
+        assert!(why_quiet(&off, &important, Some(Category::Newsletter)).contains("that setting is off"));
+        let disabled = NotificationSettings { enabled: false, ..Default::default() };
+        assert_eq!(why_quiet(&disabled, &who(), Some(Category::Person)), "Notifications are turned off");
     }
 
     #[test]

@@ -115,7 +115,7 @@ It is pre-release software. It has been used every day on Linux, against real Gm
 **Waiting for, and notifications**
 
 - Watch for words, a sender or an attachment; once or for good; normal or urgent. It lists how long you have been waiting, and when it arrives it shows the tracking number, order number or reference it found.
-- Quiet hours, a Focus mode that lets only favourites and watches through, and a log that says why each notification fired.
+- Quiet hours, a Focus mode that lets only favourites and watches through, and a log of every new message that says whether it notified and why. By default only favourites, watches and rules notify; one switch adds everyone you already write to, and a test button checks that notifications reach the desktop.
 
 **Search**
 

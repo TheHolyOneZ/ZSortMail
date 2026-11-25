@@ -59,6 +59,7 @@ export const commands = {
 	snoozeConversation: (id: number, until: number | null, options?: InvokeOptions) => __TAURI_INVOKE<Done>("snooze_conversation", { id, until }, options),
 	getNotificationSettings: (options?: InvokeOptions) => __TAURI_INVOKE<NotificationSettings>("get_notification_settings", undefined, options),
 	saveNotificationSettings: (settings: NotificationSettings, options?: InvokeOptions) => __TAURI_INVOKE<null>("save_notification_settings", { settings }, options),
+	sendTestNotification: (options?: InvokeOptions) => __TAURI_INVOKE<null>("send_test_notification", undefined, options),
 	listNotifications: (options?: InvokeOptions) => __TAURI_INVOKE<NotificationRecord[]>("list_notifications", undefined, options),
 	openNotification: (id: number, options?: InvokeOptions) => __TAURI_INVOKE<number | null>("open_notification", { id }, options),
 	getComposeSettings: (options?: InvokeOptions) => __TAURI_INVOKE<ComposeSettings>("get_compose_settings", undefined, options),
@@ -402,7 +403,7 @@ export type Notice = {
 
 export type NoticeLevel = "info" | "warning" | "error";
 
-export type NotificationKind = "watch" | "favourite" | "important" | "rule" | "routine" | "system";
+export type NotificationKind = "watch" | "favourite" | "important" | "rule" | "routine" | "mail" | "system";
 
 export type NotificationRecord = {
 	id: number,
@@ -425,6 +426,7 @@ export type NotificationSettings = {
 	quiet: QuietHours | null,
 	focus: boolean,
 	important: boolean,
+	everyone: boolean,
 };
 
 export type Nudge = {

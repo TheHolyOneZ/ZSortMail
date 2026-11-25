@@ -3,7 +3,8 @@ import { api } from '@/lib/api';
 import type { NotificationSettings } from '@/lib/bindings';
 import { useT } from '@/lib/i18n';
 import { qk, queryClient, useNotificationSettings } from '@/lib/queries';
-import { toastError } from '@/lib/toasts';
+import { toast, toastError } from '@/lib/toasts';
+import { Button } from '@/ui/controls';
 import { Toggle } from '@/ui/Toggle';
 
 function minutesToTime(minutes: number): string {
@@ -60,7 +61,13 @@ export function NotificationsSection() {
         checked={settings.enabled}
         onChange={(enabled) => void save({ ...settings, enabled })}
         title="Notify me"
-        hint="Waiting for, favourites and rules can interrupt you. Everything else stays quiet."
+        hint="The master switch. While it is on, the things you are waiting for, favourites and rules that ask to be told can notify you. Ordinary new mail does not, unless you turn on the next switch."
+      />
+      <SettingRow
+        checked={settings.everyone}
+        onChange={(everyone) => void save({ ...settings, everyone })}
+        title="Every new message from people"
+        hint="Also notify when someone you already write to sends something new. New senders, newsletters, receipts and automated mail stay quiet. Off by default, so the app only interrupts you for what you asked for."
       />
       <SettingRow
         checked={settings.focus}
@@ -72,7 +79,7 @@ export function NotificationsSection() {
         checked={settings.important}
         onChange={(important) => void save({ ...settings, important })}
         title="Mail Gmail marks as important"
-        hint="Off by default: Gmail marks a lot as important."
+        hint="Adds to what notifies: with this on, mail that Gmail marks as important notifies you too, even from senders that would otherwise stay quiet. Off by default, because Gmail marks a lot as important."
       />
       <div className="border-b border-rule py-4">
         <div className="flex items-start justify-between gap-6">
@@ -126,9 +133,29 @@ export function NotificationsSection() {
           </div>
         )}
       </div>
+      <div className="flex items-start justify-between gap-6 border-b border-rule py-4">
+        <span className="max-w-[52ch]">
+          <span className="block text-body font-medium">Check that notifications work</span>
+          <span className="mt-0.5 block text-ui text-text-2">
+            Shows one now. If nothing appears on Windows, open Settings, System, Notifications, find
+            ZSortMail and make sure it is on, and that Do not disturb is off.
+          </span>
+        </span>
+        <Button
+          className="mt-0.5"
+          onClick={() =>
+            void api
+              .sendTestNotification()
+              .then(() => toast('Test notification sent'))
+              .catch(toastError)
+          }
+        >
+          Send a test
+        </Button>
+      </div>
       <p className="mt-3 text-ui text-text-2">
         <Link to="/notifications" className="font-medium text-blue underline underline-offset-2">
-          See what was notified, and what was held back
+          See every new message and whether it notified
         </Link>
         , and why.
       </p>

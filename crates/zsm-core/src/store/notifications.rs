@@ -13,6 +13,7 @@ pub enum NotificationKind {
     Important,
     Rule,
     Routine,
+    Mail,
     System,
 }
 
@@ -24,6 +25,7 @@ impl NotificationKind {
             Self::Important => "important",
             Self::Rule => "rule",
             Self::Routine => "routine",
+            Self::Mail => "mail",
             Self::System => "system",
         }
     }
@@ -35,6 +37,7 @@ impl NotificationKind {
             "important" => Self::Important,
             "rule" => Self::Rule,
             "routine" => Self::Routine,
+            "mail" => Self::Mail,
             _ => Self::System,
         }
     }
@@ -85,6 +88,7 @@ pub struct ArrivalInfo {
     pub whitelisted: bool,
     pub hidden: bool,
     pub important: bool,
+    pub screened: bool,
 }
 
 impl Store {
@@ -97,7 +101,8 @@ impl Store {
                         COALESCE(p.whitelisted, 0),
                         (c.hidden_at IS NOT NULL OR p.hidden_at IS NOT NULL OR COALESCE(p.status, '') = 'blocked'),
                         EXISTS (SELECT 1 FROM message_labels ml JOIN labels l ON l.id = ml.label_id
-                                WHERE ml.message_id = m.id AND l.provider_id = 'IMPORTANT')
+                                WHERE ml.message_id = m.id AND l.provider_id = 'IMPORTANT'),
+                        COALESCE(p.status, '') = 'new_sender'
                  FROM messages m JOIN conversations c ON c.id = m.conversation_id
                  LEFT JOIN people p ON p.id = m.from_person_id WHERE m.id = ?1",
                 [message_id],
@@ -113,6 +118,7 @@ impl Store {
                         whitelisted: r.get(7)?,
                         hidden: r.get(8)?,
                         important: r.get(9)?,
+                        screened: r.get(10)?,
                     })
                 },
             )

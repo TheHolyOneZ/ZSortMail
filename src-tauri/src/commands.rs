@@ -349,6 +349,12 @@ pub async fn save_notification_settings(core: Shared<'_>, settings: Notification
 
 #[tauri::command]
 #[specta::specta]
+pub async fn send_test_notification(core: Shared<'_>) -> Reply<()> {
+    Ok(core.send_test_notification()?)
+}
+
+#[tauri::command]
+#[specta::specta]
 pub async fn list_notifications(core: Shared<'_>) -> Reply<Vec<NotificationRecord>> {
     Ok(core.notification_log()?)
 }
