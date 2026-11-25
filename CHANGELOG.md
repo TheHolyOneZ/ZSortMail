@@ -2,8 +2,6 @@
 
 ## 0.1.1
 
-Fixes and small additions from the first round of issues.
-
 - Windows: no more terminal window next to the app. The release build was started as a console program, so Windows opened a console with it, and closing that console closed the app. (#1, #3)
 - Mail list: Archive, snooze and trash now show when you hover a conversation, or when it has keyboard focus, and the text gets the full width of the row. Settings, Appearance, Row buttons brings them back all the time. (#2)
 - Settings, Appearance, Open on: start on People, Mail or Today. People stays the default. (#3)
