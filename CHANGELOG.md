@@ -11,9 +11,3 @@ Fixes and small additions from the first round of issues.
 - Writing to a group: a category page has a Write to everyone button that puts everyone in Bcc, and typing a category's name in To, Cc or Bcc adds all of its people. (#4)
 - Bcc: a message you send keeps who it was blind-copied to, and Details shows it. Mail you sent before this version does not have it, because it was never saved. (#6)
 - Version 0.1.1.
-
-Not changed: #5 was a question, answered on the issue.
-
-## 0.1.0
-
-First public build. Linux, Windows and macOS installers, unsigned.
