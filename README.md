@@ -94,7 +94,7 @@ It is pre-release software. It has been used every day on Linux, against real Gm
 - Read it as a clean letter or as the original HTML. HTML is cleaned when it arrives and shown in a sandbox that cannot reach the network or the app.
 - Remote images are blocked until you allow them, tracking pixels are removed and counted, and a link whose text says one thing and goes somewhere else asks first.
 - Every file a person has ever sent, in one place, with previews for images and PDFs. A timeline tab interleaves all the messages.
-- Tags, snooze, and a Mail screen with mailboxes, labels, select-all and shift-click ranges.
+- Tags, snooze, and a Mail screen with mailboxes, labels, select-all and shift-click ranges. Labels you do not use can be hidden from the sidebar with the eye on hover or in Settings; Gmail's own labels, like the star colours, are left out.
 
 **Writing**
 
@@ -127,7 +127,7 @@ Link as many Gmail accounts as you like. Each is a profile with its own theme, d
 
 **Make it yours**
 
-Hide, show and reorder the sidebar tabs and pin categories there. Drag any divider. Pick an animation for each kind of movement, or none. Four key sets (ZSortMail, Gmail, Superhuman, Vim) with any single key changeable. English and German. Compact or comfortable spacing. Open on People, Mail or Today. Archive, snooze and trash show on hover or all the time. Its own title bar, so it looks the same on every system.
+Hide, show and reorder the sidebar tabs, hide labels you do not use, and pin categories there. Drag any divider. Pick an animation for each kind of movement, or none. Four key sets (ZSortMail, Gmail, Superhuman, Vim) with any single key changeable. English and German. Compact or comfortable spacing. Open on People, Mail or Today. Archive, snooze and trash show on hover or all the time. Its own title bar, so it looks the same on every system.
 
 ## Install
 

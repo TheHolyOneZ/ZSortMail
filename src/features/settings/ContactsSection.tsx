@@ -7,6 +7,7 @@ import { useAppState } from '@/lib/queries';
 import { isTauri } from '@/lib/tauri';
 import { toast, toastError } from '@/lib/toasts';
 import { Button } from '@/ui/controls';
+import { SectionHeading } from '@/ui/SectionHeading';
 
 export function ContactsSection() {
   const t = useT();
@@ -40,7 +41,7 @@ export function ContactsSection() {
 
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.contacts')}</h2>
+      <SectionHeading>{t('settings.contacts')}</SectionHeading>
       <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-b border-rule py-4">
         <div className="max-w-[52ch]">
           <h3 className="text-body font-medium">Import an address book</h3>

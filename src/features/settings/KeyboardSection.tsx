@@ -13,6 +13,7 @@ import {
 import { useUi } from '@/lib/store';
 import { toast } from '@/lib/toasts';
 import { Button, Kbd } from '@/ui/controls';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Select } from '@/ui/Select';
 
 const mac = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform);
@@ -53,7 +54,7 @@ export function KeyboardSection() {
 
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.keyboard')}</h2>
+      <SectionHeading>{t('settings.keyboard')}</SectionHeading>
       <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-b border-rule py-4">
         <div className="max-w-[48ch]">
           <h3 className="text-body font-medium">Keys</h3>
@@ -72,7 +73,7 @@ export function KeyboardSection() {
       </div>
       {GROUPS.map((group) => (
         <section key={group} aria-label={`${group} keys`} className="mt-4">
-          <h3 className="text-meta font-medium text-text-2">{group}</h3>
+          <h3 className="text-ui font-semibold text-text-2">{group}</h3>
           <ul className="mt-1 border-t border-rule">
             {ACTIONS.filter((a) => a.group === group).map((a) => {
               const own = a.id in keys.overrides;

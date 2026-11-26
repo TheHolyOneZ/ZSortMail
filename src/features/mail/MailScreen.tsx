@@ -2,6 +2,7 @@ import {
   Archive,
   BookmarkSimple,
   EnvelopeSimple,
+  EyeSlash,
   PaperPlaneTilt,
   PencilSimpleLine,
   Star,
@@ -21,6 +22,8 @@ import { formatListTime, plural } from '@/lib/format';
 import { useT } from '@/lib/i18n';
 import { useMailSearch } from '@/lib/mailSearch';
 import { useInbox, useSavedViews, useTags, useView } from '@/lib/queries';
+import { cleanSidebar, setLabelShown, visibleLabels } from '@/lib/sidebar';
+import { useUi } from '@/lib/store';
 import { toast, toastError } from '@/lib/toasts';
 import type { Key } from '@/locales/en';
 import { Button, Chip, IconButton, SearchField } from '@/ui/controls';
@@ -88,7 +91,10 @@ export function MailScreen() {
   const [box, setBox] = useState('inbox');
   const [reading, setReading] = useState<{ id: number; person: number | null } | null>(null);
   const wide = useWide();
-  const { data: tags = [] } = useTags();
+  const { data: allTags = [] } = useTags();
+  const sidebar = cleanSidebar(useUi((u) => u.sidebar));
+  const setSidebar = useUi((u) => u.setSidebar);
+  const tags = visibleLabels(allTags, sidebar);
   const labelBox = box.startsWith('label:') ? box.slice(6) : null;
   const boxQuery = labelBox ? labelQuery(labelBox) : (BOXES.find((b) => b.id === box)?.query ?? '');
   const inInbox = box === 'inbox' && !searching;
@@ -204,7 +210,7 @@ export function MailScreen() {
               {tags.map((tag) => {
                 const on = box === `label:${tag.name}` && !searching;
                 return (
-                  <li key={tag.id}>
+                  <li key={tag.id} className="group relative">
                     <button
                       type="button"
                       aria-current={on ? 'true' : undefined}
@@ -214,7 +220,7 @@ export function MailScreen() {
                         setPicked(new Set());
                       }}
                       className={cn(
-                        'flex h-10 w-full items-center gap-3 rounded-control px-3 text-start text-ui font-medium transition-colors',
+                        'flex h-10 w-full items-center gap-3 rounded-control ps-3 pe-10 text-start text-ui font-medium transition-colors',
                         on
                           ? 'bg-blue-wash text-text'
                           : 'text-text-2 hover:bg-hover hover:text-text',
@@ -223,6 +229,16 @@ export function MailScreen() {
                       <Tag size={18} weight={on ? 'fill' : 'regular'} />
                       <span className="min-w-0 flex-1 truncate">{tag.name}</span>
                     </button>
+                    <IconButton
+                      label={t('mail.hide_label')}
+                      className="absolute end-1 top-1 size-8 opacity-0 focus-visible:opacity-100 group-hover:opacity-100"
+                      onClick={() => {
+                        if (on) setBox('inbox');
+                        setSidebar(setLabelShown(sidebar, tag.name, false));
+                      }}
+                    >
+                      <EyeSlash size={16} />
+                    </IconButton>
                   </li>
                 );
               })}

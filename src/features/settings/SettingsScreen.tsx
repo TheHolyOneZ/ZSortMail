@@ -8,12 +8,14 @@ import { now } from '@/lib/clock';
 import { cn } from '@/lib/cn';
 import { type LocalePreference, useT } from '@/lib/i18n';
 import { profileKey } from '@/lib/profiles';
-import { qk, queryClient, useAppState, useSyncStatus } from '@/lib/queries';
+import { qk, queryClient, useAppState, useSyncStatus, useTags } from '@/lib/queries';
 import {
   cleanSidebar,
   DEFAULT_SIDEBAR,
+  isSystemLabel,
   moveTab,
   type SidebarTab,
+  setLabelShown,
   setTabShown,
 } from '@/lib/sidebar';
 import { type Density, type RowActions, type StartPage, useUi } from '@/lib/store';
@@ -24,6 +26,7 @@ import { useMotionGovernor } from '@/motion/MotionProvider';
 import { Button, IconButton, Segmented } from '@/ui/controls';
 import { Dialog } from '@/ui/Dialog';
 import { Modal } from '@/ui/Modal';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Select } from '@/ui/Select';
 import { Toggle } from '@/ui/Toggle';
 import { LinkGmail } from '../onboarding/LinkGmail';
@@ -171,7 +174,7 @@ function AccountsSection() {
   void qk;
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.accounts')}</h2>
+      <SectionHeading first>{t('settings.accounts')}</SectionHeading>
       {accounts.length === 0 && <p className="mt-2 text-ui text-text-2">{t('set.no_mailbox')}</p>}
       {accounts.map((a) => (
         <AccountRow key={a.id} account={a} status={statuses.find((s) => s.account_id === a.id)} />
@@ -211,7 +214,7 @@ function ProfilesSection() {
   const source = from || (others[0] ? profileKey(others[0].email) : '');
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.profiles')}</h2>
+      <SectionHeading>{t('settings.profiles')}</SectionHeading>
       <p className="mt-1 text-ui text-text-2">
         Each mailbox is a profile with its own theme, density, animations, shortcuts and sidebar.
         {accounts.length < 2 && ' Link a second account to get a second profile.'}
@@ -285,9 +288,11 @@ function SidebarSection() {
   const stored = useUi((s) => s.sidebar);
   const set = useUi((s) => s.setSidebar);
   const layout = cleanSidebar(stored);
+  const { data: tags = [] } = useTags();
+  const labels = tags.filter((tag) => !isSystemLabel(tag.name));
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.sidebar')}</h2>
+      <SectionHeading>{t('settings.sidebar')}</SectionHeading>
       <p className="mt-1 text-ui text-text-2">{t('set.sidebar_intro')}</p>
       <ul
         aria-label={t('set.sidebar_tabs')}
@@ -324,6 +329,32 @@ function SidebarSection() {
           );
         })}
       </ul>
+      <h3 className="mt-6 text-body font-medium">{t('set.sidebar_labels')}</h3>
+      <p className="mt-0.5 max-w-[56ch] text-ui text-text-2">{t('set.sidebar_labels_hint')}</p>
+      {labels.length === 0 ? (
+        <p className="mt-2 text-ui text-text-2">{t('set.sidebar_labels_none')}</p>
+      ) : (
+        <ul
+          aria-label={t('set.sidebar_labels')}
+          className="mt-3 divide-y divide-rule rounded-control border border-rule-strong"
+        >
+          {labels.map((tag) => {
+            const shown = !layout.hiddenLabels.includes(tag.name);
+            return (
+              <li key={tag.id} className="flex items-center gap-3 px-3 py-1.5">
+                <span className={cn('min-w-0 flex-1 truncate text-ui', !shown && 'text-text-2')}>
+                  {tag.name}
+                </span>
+                <Toggle
+                  label={`Show ${tag.name} in the sidebar`}
+                  checked={shown}
+                  onChange={(on) => set(setLabelShown(layout, tag.name, on))}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <div className="mt-2">
         <Button onClick={() => set(DEFAULT_SIDEBAR)}>{t('settings.reset_sidebar')}</Button>
       </div>
@@ -362,7 +393,7 @@ export function SettingsScreen() {
         <WritingSection />
         <ContactsSection />
         <NotificationsSection />
-        <h2 className="mt-8 text-name font-semibold">{t('settings.appearance')}</h2>
+        <SectionHeading>{t('settings.appearance')}</SectionHeading>
 
         <Row title={t('settings.language')} hint={t('settings.language_hint')}>
           <Select<LocalePreference>
@@ -447,7 +478,7 @@ export function SettingsScreen() {
         <ProfilesSection />
         <SidebarSection />
 
-        <h2 className="mt-8 text-name font-semibold">{t('settings.people')}</h2>
+        <SectionHeading>{t('settings.people')}</SectionHeading>
         <Row title={t('set.start_categories')} hint={t('set.start_categories_hint')}>
           <Toggle
             label={t('set.start_categories')}
@@ -456,10 +487,10 @@ export function SettingsScreen() {
           />
         </Row>
 
-        <h2 className="mt-8 text-name font-semibold">{t('set.tags')}</h2>
+        <SectionHeading>{t('set.tags')}</SectionHeading>
         <TagMirrorRow />
 
-        <h2 className="mt-8 text-name font-semibold">{t('settings.reading')}</h2>
+        <SectionHeading>{t('settings.reading')}</SectionHeading>
         <Row title={t('set.tidy')} hint={t('set.tidy_hint')}>
           <Toggle label={t('set.tidy')} checked={tidyLetters} onChange={setTidyLetters} />
         </Row>

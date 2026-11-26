@@ -119,6 +119,11 @@ export const en = {
     'Shorten very long links, replace embedded image code with [image], and fold away the automatic footer of notification mail. Nothing is deleted: Show the automatic footer brings it back.',
   'set.no_mailbox': 'No mailbox is linked.',
   'set.sidebar_tabs': 'Sidebar tabs',
+  'set.sidebar_labels': 'Labels in Mail',
+  'set.sidebar_labels_hint':
+    'Choose which of your labels show in the Mail sidebar. Gmail’s own labels, like the star colours, are always left out. Hiding a label here does not change it in Gmail.',
+  'set.sidebar_labels_none': 'No labels yet.',
+  'mail.hide_label': 'Hide this label from the sidebar',
 
   'filter.all': 'All',
   'filter.needs_reply': 'Needs reply',

@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { useT } from '@/lib/i18n';
 import { qk, queryClient, useComposeSettings } from '@/lib/queries';
 import { toastError } from '@/lib/toasts';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Select } from '@/ui/Select';
 
 const UNDO_CHOICES = [0, 5, 10, 20, 30];
@@ -31,7 +32,7 @@ export function WritingSection() {
 
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.writing')}</h2>
+      <SectionHeading>{t('settings.writing')}</SectionHeading>
       <div className="border-b border-rule py-4">
         <label htmlFor="signature" className="block text-body font-medium">
           Signature

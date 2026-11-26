@@ -122,6 +122,11 @@ export const de: Catalog = {
     'Kürzt sehr lange Links, ersetzt eingebetteten Bildcode durch [image] und klappt die automatische Fußzeile von Benachrichtigungen ein. Nichts wird gelöscht: „Automatische Fußzeile zeigen“ holt sie zurück.',
   'set.no_mailbox': 'Kein Postfach verknüpft.',
   'set.sidebar_tabs': 'Tabs der Seitenleiste',
+  'set.sidebar_labels': 'Labels in Mail',
+  'set.sidebar_labels_hint':
+    'Wähle, welche deiner Labels in der Seitenleiste von Mail erscheinen. Gmails eigene Labels, etwa die Sternfarben, bleiben immer draußen. Ein Label hier auszublenden ändert nichts in Gmail.',
+  'set.sidebar_labels_none': 'Noch keine Labels.',
+  'mail.hide_label': 'Dieses Label in der Seitenleiste ausblenden',
 
   'filter.all': 'Alle',
   'filter.needs_reply': 'Braucht Antwort',

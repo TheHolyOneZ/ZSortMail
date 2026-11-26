@@ -5,6 +5,7 @@ import { useT } from '@/lib/i18n';
 import { qk, queryClient, useNotificationSettings } from '@/lib/queries';
 import { toast, toastError } from '@/lib/toasts';
 import { Button } from '@/ui/controls';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Toggle } from '@/ui/Toggle';
 
 function minutesToTime(minutes: number): string {
@@ -56,7 +57,7 @@ export function NotificationsSection() {
   if (!settings) return null;
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.notifications')}</h2>
+      <SectionHeading>{t('settings.notifications')}</SectionHeading>
       <SettingRow
         checked={settings.enabled}
         onChange={(enabled) => void save({ ...settings, enabled })}

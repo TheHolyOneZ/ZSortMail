@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3
+
+Labels and Settings, from the third round of issues.
+
+- Mail, Labels: hide the labels you do not use. Hover a label and press the eye, or use Settings, Sidebar, Labels in Mail. Hiding only affects this sidebar, not Gmail. Gmail's own labels, like YELLOW_STAR, CATEGORY_* and [Gmail]/..., no longer show in the list. (#11)
+- Settings: section headings are larger and have a rule above them, so they stand apart from the setting titles under them. The group names in Keyboard are bolder. (#10)
+- Version 0.1.3.
+
 ## 0.1.2
 
 Notifications, from the second round of issues.

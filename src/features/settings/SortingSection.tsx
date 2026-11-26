@@ -5,6 +5,7 @@ import { useT } from '@/lib/i18n';
 import { useDomainRules, useGroups } from '@/lib/queries';
 import { toastError } from '@/lib/toasts';
 import { Button } from '@/ui/controls';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Select } from '@/ui/Select';
 
 const field =
@@ -14,7 +15,7 @@ export function SortingSection() {
   const t = useT();
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.sorting')}</h2>
+      <SectionHeading>{t('settings.sorting')}</SectionHeading>
       <div className="border-b border-rule py-4">
         <h3 className="text-body font-medium">Rules</h3>
         <p className="mt-0.5 max-w-[56ch] text-ui text-text-2">

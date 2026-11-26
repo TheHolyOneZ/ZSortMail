@@ -9,6 +9,7 @@ import { useT } from '@/lib/i18n';
 import { useUi } from '@/lib/store';
 import { toast } from '@/lib/toasts';
 import { Button } from '@/ui/controls';
+import { SectionHeading } from '@/ui/SectionHeading';
 import { Select } from '@/ui/Select';
 import { Toggle } from '@/ui/Toggle';
 
@@ -39,7 +40,7 @@ export function AnimationsSection() {
 
   return (
     <>
-      <h2 className="mt-8 text-name font-semibold">{t('settings.animations')}</h2>
+      <SectionHeading>{t('settings.animations')}</SectionHeading>
       <p className="mt-1 max-w-[56ch] text-ui text-text-2">
         Pick how things move, or turn a kind of movement off. The Motion setting above can still
         reduce all of them.

@@ -4,7 +4,9 @@ import {
   DEFAULT_SIDEBAR,
   moveTab,
   SIDEBAR_TABS,
+  setLabelShown,
   setTabShown,
+  visibleLabels,
   visibleTabs,
 } from './sidebar';
 
@@ -38,5 +40,23 @@ describe('sidebar layout', () => {
     expect(fixed.hidden).toEqual(['/waiting']);
     expect(cleanSidebar(null)).toEqual(DEFAULT_SIDEBAR);
     expect(cleanSidebar('nonsense')).toEqual(DEFAULT_SIDEBAR);
+  });
+
+  it('hides Gmail system labels and the ones a person hides', () => {
+    const tags = [
+      { name: '[Gmail]/Others' },
+      { name: 'YELLOW_STAR' },
+      { name: 'CATEGORY_PROMOTIONS' },
+      { name: 'Taxes' },
+      { name: 'Trips' },
+    ];
+    expect(visibleLabels(tags, DEFAULT_SIDEBAR).map((t) => t.name)).toEqual(['Taxes', 'Trips']);
+    const hid = setLabelShown(DEFAULT_SIDEBAR, 'Taxes', false);
+    expect(visibleLabels(tags, hid).map((t) => t.name)).toEqual(['Trips']);
+    expect(visibleLabels(tags, setLabelShown(hid, 'Taxes', true)).map((t) => t.name)).toEqual([
+      'Taxes',
+      'Trips',
+    ]);
+    expect(cleanSidebar({ hiddenLabels: ['A', 'A', 3] }).hiddenLabels).toEqual(['A']);
   });
 });
